@@ -1,10 +1,4 @@
 
-@keyframes close {
-  to { 
-    transform:translateY(0) rotate(0deg); 
-  }
-}
-
 
 .fadeIn {
   -webkit-animation-name: fadeIn;

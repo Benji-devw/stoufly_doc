@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import Footer from './ui/Footer'
-import Header from './ui/Header'
+import Footer from './Footer'
+import Header from './Header'
 
 const Layout = ({children, page}: any) => {
   
@@ -17,6 +17,7 @@ const Layout = ({children, page}: any) => {
         {children}
       </main>
       <Footer />
+
     </>
   )
 }
