@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './_libs/appGuruz.css';
+
 html,
 body {
   padding: 0;
