@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Footer from './Footer'
 import Header from './Header'
+import Script from 'next/script'
 
 const Layout = ({children, page}: any) => {
   
@@ -17,7 +18,7 @@ const Layout = ({children, page}: any) => {
         {children}
       </main>
       <Footer />
-
+      <Script src="https://unpkg.com/wavesurfer.js" />
     </>
   )
 }

@@ -2,7 +2,6 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import Button from "../ui/Button"
-import Script from 'next/script'
 
 
 const Header = () => {
@@ -43,18 +42,18 @@ const Header = () => {
 
 
   return (
-    <header className="container mx-auto p-2 flex sm:flex-row flex-col justify-between">
+    <header className="container mx-auto p-2 flex flex-wrap sm:flex-row flex-col justify-between">
       <div className="basis-1/4 flex items-center">01</div>
       
       <div className="basis-1/2">
           <form>   
-            <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label>
+            <label htmlFor="default-search" className="mb-2 text-sm font-medium text-zinc-900 sr-only dark:text-zinc-300">Search</label>
             <div className="relative">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                    <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <svg aria-hidden="true" className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="search" id="default-search" className="block p-4 pl-10 w-full text-sm outline outline-offset-0 outline-0 text-gray-900 bg-gray-50 rounded-lg border border-gray-600  focus:border-orange-600 dark:bg-gray-900 dark:border-gray-600 dark:placeholder-gray-600 dark:text-white dark:focus:ring-orange-500 dark:focus:border-orange-500" placeholder="Search Mockups, Logos..." required />
-                <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-700 dark:hover:bg-orange-600 dark:focus:ring-orange-800">Search</button>
+                <input type="search" id="default-search" className="block p-4 pl-10 w-full text-sm outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" placeholder="Search Mockups, Logos..." required />
+                <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</button>
             </div>
         </form>
       </div>
@@ -63,13 +62,8 @@ const Header = () => {
         {navigation.map((nav, id) => (
           <Link key={id} href={nav.path} className="mr-4 ml-4">{nav.label}</Link>
         ))}
-      </div>
-
-      <div className="basis-1/4 flex items-center">
         <RenderThemeCanger />
       </div>
-      <Script src="https://unpkg.com/wavesurfer.js" />
-
     </header>
   )
 }

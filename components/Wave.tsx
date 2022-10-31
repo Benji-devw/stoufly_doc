@@ -1,6 +1,6 @@
 // import WaveSurfer from "wavesurfer.js";
 import { useState, useEffect, useRef } from 'react'
-
+import Link from 'next/link';
 
 
 
@@ -9,9 +9,11 @@ const Wave = ({url, tempo}:any) => {
   const waveformRef = useRef(null!);
   const wavesurfer = useRef<any>(waveformRef);
   const [isPlaying, setIsPlaying] = useState(false)
+  const [duration, setDuration] = useState('0:00')
+  const [currentTime, setCurrentTime] = useState('0:00')
 
 
-    // Calcule Time
+  // Calcule and format Time
     const calculateCurrentTime = (value: any) => {
       let seconds: any = Math.floor(value % 60);
       let minutes = Math.floor((value / 60) % 60);
@@ -30,54 +32,58 @@ const Wave = ({url, tempo}:any) => {
   }
 
 
-    const [duration, setDuration] = useState('0:00')
-    const [currentTime, setCurrentTime] = useState('0:00')
   
   useEffect(() => {
-
-    wavesurfer.current = WaveSurfer.create({
+    const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
-      waveColor: '#ff5901',
-      progressColor: 'orange',
-      barWidth: 2,
+      waveColor: '#ea580c',
+      progressColor: '#9a3412',
+      // cursorColor: 'black',
+      cursorWidth: 1,
+      barWidth: 3,
       responsive: true,
       hideScrollbar: true,
-      // barRadius: 1
+      barGap: 3,
+      barRadius: 2
+    });
+    wavesurfer.load(url)
+    wavesurfer.on("ready", () => {
+      setDuration(calculateDuration(wavesurfer.getDuration()))
+      wavesurfer.setVolume(1);
+      if (isPlaying) wavesurfer.playPause()
+      else wavesurfer.pause(); setCurrentTime('0:00');
+  });
+  wavesurfer.on("audioprocess", () => {
+      setCurrentTime(calculateCurrentTime(wavesurfer.getCurrentTime()))
   })
-
-  wavesurfer.current.load(url);
-  wavesurfer.current.on("ready", function() {
-    setDuration(calculateDuration(wavesurfer.current.getDuration()))
-    wavesurfer.current.setVolume(1);
-    if (isPlaying) wavesurfer.current.play();
-    else wavesurfer.current.pause(); setCurrentTime('0:00');
-});
-wavesurfer.current.on("audioprocess", function() {
-    setCurrentTime(calculateCurrentTime(wavesurfer.current.getCurrentTime()))
-})
-
-return () => wavesurfer.current.destroy();
-}, [wavesurfer, url, isPlaying])
-
+  return () => wavesurfer.destroy();
+}, [wavesurfer, url, isPlaying, waveformRef])
 
 
 
 
   return (
-
-          <>
-            <div ref={waveformRef} onMouseEnter={() => setIsPlaying(true)} onMouseLeave={() =>setIsPlaying(false)}></div>
-            <div className={`text-gray-400 text-md text-left py-2`}> 
-                ... <span>{tempo ? `${tempo}bpm` : ''} </span>
-                <span className='ml-2'> {currentTime} /</span>
-                <span> {duration }</span>
-                <span className={``}>
-                {/* <Link href={url} download passHref><a><AiOutlineDownload /></a></Link> */}
-                </span>
-            </div>
+    <>
+      {/* <div ref={waveformRef} onClick={() => setIsPlaying(!isPlaying)}></div> */}
+      <div ref={waveformRef} onMouseEnter={() => setIsPlaying(true)} onMouseLeave={() =>setIsPlaying(false)}></div>
+      <div className={`flex text-left py-2`}> 
+          <span className='basis-2/3'>... {tempo ? `${tempo} bpm` : ''} </span>
             
-        </>
+          <div className='basis-2/3 relative'> 
+            <svg className="w-6 h-6 time stroke-orange-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{currentTime} / {duration }</span>
+          </div>
 
+       
+          <Link className='basis-1/3 download' href={url} download passHref>
+            <svg className="w-6 h-6 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+          </Link>
+      </div>
+    </>
   )
 }
 export default Wave
