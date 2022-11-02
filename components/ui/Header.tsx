@@ -2,15 +2,56 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import Button from "../ui/Button"
+import Router from 'next/router';
+import { useRouter } from 'next/router'
+
 
 
 const Header = () => {
+
+  const router = useRouter()
   const {systemTheme, theme, setTheme} = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const [mountedTheme, setMountedTheme] = useState(false)
+  const [query, setQuery] = useState<string>('');
+
+  const handleKeyPress = (e: any) => {
+    if (query === '' || query.length < 1) return null
+    else if (e.key === 'Enter') {
+      e.preventDefault()
+      router.query.search = query
+      router.push({ 
+          pathname: '/', 
+          query: { ...router.query, search: query } }, 
+          undefined, 
+          {})
+    }
+  }
+
+  const LinkFilter = ({children, val}: any) => {
+    return (
+      <Link href={``} legacyBehavior>
+        <a onClick={(e) => {
+          e.preventDefault(),
+          router.query.search = val, 
+          router.push({ 
+            pathname: '/', 
+            query: { ...router.query, search: val } }, 
+            undefined, 
+            {}
+        )}}>
+        {children}
+        </a>
+      </Link>
+    )
+  }
+  
+
 
   useEffect(() =>  {
-    setMounted(true)
-  },[])
+    if (!mountedTheme) {
+      setMountedTheme(true)
+    }
+  },[mountedTheme])
 
   const navigation = [
     {label: 'Home', path: '/'},
@@ -21,7 +62,7 @@ const Header = () => {
 
   const RenderThemeCanger = () => {
     const currentTheme = theme === 'system' ? systemTheme : theme;
-    if (!mounted) return null
+    if (!mountedTheme) return null
     return (
       currentTheme === 'dark' ? 
         <Button className="" onClick={() => setTheme('light')}>
@@ -39,8 +80,6 @@ const Header = () => {
   }
 
 
-
-
   return (
     <header className="container mx-auto p-2 flex flex-wrap sm:flex-row flex-col justify-between">
       <div className="basis-1/4 flex items-center">01</div>
@@ -52,8 +91,29 @@ const Header = () => {
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <svg aria-hidden="true" className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="search" id="default-search" className="block p-4 pl-10 w-full text-sm outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" placeholder="Search Mockups, Logos..." required />
-                <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</button>
+                <input type="search" value={query} id="default-search"  placeholder="Loop, jazz, 125bpm..."
+                  className="block p-4 pl-10 w-full text-sm outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" 
+                  onChange={(e) => { setQuery(e.target.value)}}
+                  onKeyPress={handleKeyPress}
+                  
+                  />
+                  <LinkFilter queryVal={'search'} val={query}>
+                    <span className="absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</span>
+                  </LinkFilter>
+
+                  {/* <Link href={``} legacyBehavior>
+                    <a onClick={(e) => {
+                      e.preventDefault(),
+                      router.query.search = query, 
+                      router.push({ 
+                        pathname: '/', 
+                        query: { ...router.query, search: query } }, 
+                        undefined, 
+                        {}
+                    )}}>
+                    </a>
+                  </Link> */}
+                {/* <button type="submit" className=" absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</button> */}
             </div>
         </form>
       </div>

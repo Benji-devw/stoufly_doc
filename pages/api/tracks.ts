@@ -2,17 +2,16 @@ import axios from 'axios';
 
 
 export async function getTracks(query: any) {
-  // console.log(query);
-  // &_limit=${query._limit}
-  // let url = ``
-  // if (query._limit != undefined) {
-  //   url = `http://localhost:8080/tracks/${query.category !== undefined ? `?category=${query.category}&_limit=${query._limit}` : `?_limit=${query._limit}` }`
-  // } else {
-  //   url = `http://localhost:8080/tracks/?_limit=${5}`
-  // }
+
+  let esc = encodeURIComponent;
+  let queries = Object.keys(query)
+    .map(k => esc(k) + '=' + esc(query[k]))
+    .join('&');
+
   
   try {
-    const res = await fetch(`http://localhost:8080/tracks/${query.category !== undefined ? `?category=${query.category}` : `` }`)
+    const res = await fetch(`http://localhost:8080/tracks/${query ? '?' : ''}${queries}`)
+    
       .then(r => r.json())
       return {
         props: {res}

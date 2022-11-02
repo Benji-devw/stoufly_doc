@@ -1,13 +1,23 @@
 .card  {
   flex-direction: column;
-  height: 350px;
+  height: 370px;
   width: 300px;
   transition: .3s;
+  border: var(--main-dark-t) solid 1px;
+}
+.card:hover {
+  border: var(--main-orange-600) solid 1px;
 }
 
+.controls:hover {
+  cursor: pointer;
+}
+.controls:hover svg {
+  stroke: var(--main-orange-600) !important;
+}
 
 .download:hover svg {
-  stroke: var(--main-orange) !important;
+  stroke: var(--main-orange-600) !important;
 }
 .time {
   position: absolute;

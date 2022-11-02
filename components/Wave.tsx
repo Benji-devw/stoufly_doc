@@ -2,72 +2,106 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link';
 
+type IWaveProps = {
+  url: string
+  bpm: number
+}
 
 
-const Wave = ({url, tempo}:any) => {
+const Wave = ({url, bpm}: IWaveProps) => {
    
-  const waveformRef = useRef(null!);
-  const wavesurfer = useRef<any>(waveformRef);
+  const waveformRef = useRef<any>(null);
+  const wavesurfer = useRef<any>(null);
   const [isPlaying, setIsPlaying] = useState(false)
   const [duration, setDuration] = useState('0:00')
   const [currentTime, setCurrentTime] = useState('0:00')
+  const [playing, setPlaying] = useState(false);
 
 
   // Calcule and format Time
-    const calculateCurrentTime = (value: any) => {
-      let seconds: any = Math.floor(value % 60);
-      let minutes = Math.floor((value / 60) % 60);
-      if (seconds < 10) seconds = "0" + seconds;
-      return minutes + ":" + seconds;
+  const calculateCurrentTime = (value: any) => {
+    let seconds: any = Math.floor(value % 60);
+    let minutes = Math.floor((value / 60) % 60);
+    if (seconds < 10) seconds = "0" + seconds;
+    return minutes + ":" + seconds;
   }
   const calculateDuration = (value: any) => {
-      let seconds: any = Math.floor(value % 60);
-      let minutes = Math.floor((value / 60) % 60);
-      const milliseconds = Math.floor(value * 1000);
-      if (seconds < 10) {
-          if (seconds <= 0) seconds = `0${Math.floor(milliseconds / 10)}`;
-          else seconds = "0" + seconds;
-      }
-      return seconds > 0 ? minutes + ":" + seconds : seconds
+    let seconds: any = Math.floor(value % 60);
+    let minutes = Math.floor((value / 60) % 60);
+    const milliseconds = Math.floor(value * 1000);
+    if (seconds < 10) {
+        if (seconds <= 0) seconds = `0${Math.floor(milliseconds / 10)}`;
+        else seconds = "0" + seconds;
+    }
+    return seconds > 0 ? minutes + ":" + seconds : seconds
   }
 
 
   
   useEffect(() => {
-    const wavesurfer = WaveSurfer.create({
-      container: waveformRef.current,
-      waveColor: '#ea580c',
-      progressColor: '#9a3412',
-      // cursorColor: 'black',
-      cursorWidth: 1,
-      barWidth: 3,
-      responsive: true,
-      hideScrollbar: true,
-      barGap: 3,
-      barRadius: 2
-    });
-    wavesurfer.load(url)
-    wavesurfer.on("ready", () => {
-      setDuration(calculateDuration(wavesurfer.getDuration()))
-      wavesurfer.setVolume(1);
-      if (isPlaying) wavesurfer.playPause()
-      else wavesurfer.pause(); setCurrentTime('0:00');
-  });
-  wavesurfer.on("audioprocess", () => {
-      setCurrentTime(calculateCurrentTime(wavesurfer.getCurrentTime()))
-  })
-  return () => wavesurfer.destroy();
-}, [wavesurfer, url, isPlaying, waveformRef])
+      return () => {
+        createWave();
+        if (wavesurfer.current) {
+          wavesurfer.current.destroy();
+        }
+      };
+  }, []);
 
+  const createWave = async () => {
+    const WaveSurfer = (await import("wavesurfer.js")).default;
+    if (!wavesurfer.current) {
+      wavesurfer.current = WaveSurfer.create({
+        container: waveformRef.current,
+        waveColor: '#ea580c',
+        progressColor: '#9a3412',
+        // cursorColor: 'black',
+        cursorWidth: 1,
+        barWidth: 3,
+        responsive: true,
+        hideScrollbar: true,
+        barGap: 3,
+        barRadius: 2
+      });
+  
+      wavesurfer.current.load(url);
+      wavesurfer.current.on("ready", () => {
+        setDuration(calculateDuration(wavesurfer.current.getDuration()))
+        wavesurfer.current.setVolume(1);
+        if (isPlaying) wavesurfer.current.playPause()
+        else wavesurfer.current.pause(); setCurrentTime('0:00');
+      });
+      wavesurfer.current.on("audioprocess", () => {
+        setCurrentTime(calculateCurrentTime(wavesurfer.current.getCurrentTime()))
+      })
+    }
+  };
+
+  const handlePlayPause = () => {
+    setPlaying(!playing);
+    wavesurfer.current.playPause();
+  };
 
 
 
   return (
     <>
-      {/* <div ref={waveformRef} onClick={() => setIsPlaying(!isPlaying)}></div> */}
-      <div ref={waveformRef} onMouseEnter={() => setIsPlaying(true)} onMouseLeave={() =>setIsPlaying(false)}></div>
+      <div ref={waveformRef} onClick={() => setIsPlaying(!isPlaying)}></div>
+      {/* <div ref={waveformRef} onMouseEnter={() => setIsPlaying(true)} onMouseLeave={() =>setIsPlaying(false)} /> */}
+      
+      <div className="controls">
+        <div onClick={handlePlayPause}>{!playing ? (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 cursor-pointer hover:stroke-orange-600">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8  cursor-pointer hover:stroke-orange-600">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+            </svg>
+          )}
+        </div>
+      </div>
       <div className={`flex text-left py-2`}> 
-          <span className='basis-2/3'>... {tempo ? `${tempo} bpm` : ''} </span>
+          <span className='basis-2/3'>... {bpm ? `${bpm} bpm` : ''} </span>
             
           <div className='basis-2/3 relative'> 
             <svg className="w-6 h-6 time stroke-orange-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -76,13 +110,13 @@ const Wave = ({url, tempo}:any) => {
             <span>{currentTime} / {duration }</span>
           </div>
 
-       
           <Link className='basis-1/3 download' href={url} download passHref>
             <svg className="w-6 h-6 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
           </Link>
       </div>
+
     </>
   )
 }
