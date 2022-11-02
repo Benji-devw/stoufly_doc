@@ -6,13 +6,15 @@ import { useRouter } from 'next/router'
 
 const AudioPlayer = ({track}: any) => {
   const router = useRouter()
-
-  // const [tags, setTags] = useState(track.tags.replace(/\s/g, '').split(','))
+  const [tags, setTags] = useState(track.tags.replace(/\s/g, '').split(','))
   return (
     <div className="card fadeIn blurOut p-2 flex dark:bg-zinc-900 bg-zinc-300 rounded-md">
 
       <div className="wave">
+        {/********/
+        /** DISPLAY */}
         <Wave url={track.url} bpm={track.bpm} />
+
         <div className=" flex text-xl text-left py-2"> 
           <h2 className='basis-4/5'>{track.title}</h2> 
             <svg className="w-6 h-6 basis-1/5 mx-auto hover:stroke-orange-600 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -20,13 +22,24 @@ const AudioPlayer = ({track}: any) => {
             </svg>
         </div>
       </div>
+
+      {/********/
+      /** TAGS MAP */}
       <div className="h-28 flex items-end">
         <div className={`tags w-max`}>
-          {/* {tags.map((tag: string[], id: number) => (
-            <Link key={id} href={`/?search=${tag}&category=${router.query.category}`} >
-                <span className="align-middle bg-orange-700 hover:bg-orange-800 rounded-md px-2 mr-1 mb-1">#{tag}</span>
-            </Link>
-          ))} */}
+          {tags.map((tag: string[], id: number) => (
+            <button key={id}
+            onClick={(e) => {
+              router.query.tag = tag
+                 e.preventDefault()
+                 router.push({ 
+                   pathname: '/', 
+                   query: { ...router.query, tag: tag } }, 
+                   undefined, {})
+             }}>
+           <span className="align-middle bg-orange-700 hover:bg-orange-800 rounded-md px-2 mr-1 mb-1">#{tag}</span>
+         </button>
+          ))}
           <br /><span className={`text-xs`}> By : {track.reporter} - Posted : {track.datePost.slice(0, 4)} </span>
         </div>
       </div>

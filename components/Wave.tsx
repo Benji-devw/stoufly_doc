@@ -17,8 +17,8 @@ const Wave = ({url, bpm}: IWaveProps) => {
   const [currentTime, setCurrentTime] = useState('0:00')
   const [playing, setPlaying] = useState(false);
 
-
-  // Calcule and format Time
+  /********/
+  /** CALCULATE AND FORMATO TIME TRACKS */
   const calculateCurrentTime = (value: any) => {
     let seconds: any = Math.floor(value % 60);
     let minutes = Math.floor((value / 60) % 60);
@@ -40,13 +40,13 @@ const Wave = ({url, bpm}: IWaveProps) => {
   
   useEffect(() => {
       return () => {
-        createWave();
-        if (wavesurfer.current) {
-          wavesurfer.current.destroy();
-        }
-      };
-  }, []);
+        createWave()
+        if (wavesurfer.current) wavesurfer.current.destroy();
+      }
+  }, [])
 
+  /********/
+  /** WAVE CREATE */
   const createWave = async () => {
     const WaveSurfer = (await import("wavesurfer.js")).default;
     if (!wavesurfer.current) {
@@ -76,6 +76,8 @@ const Wave = ({url, bpm}: IWaveProps) => {
     }
   };
 
+  /********/
+  /** WAVE PLAY AND PAUSE */
   const handlePlayPause = () => {
     setPlaying(!playing);
     wavesurfer.current.playPause();
@@ -85,9 +87,12 @@ const Wave = ({url, bpm}: IWaveProps) => {
 
   return (
     <>
+      {/********/
+      /** WAVE DISPLAY */}
       <div ref={waveformRef} onClick={() => setIsPlaying(!isPlaying)}></div>
-      {/* <div ref={waveformRef} onMouseEnter={() => setIsPlaying(true)} onMouseLeave={() =>setIsPlaying(false)} /> */}
       
+      {/********/
+      /** WAVE PLAY AND PAUSE */}
       <div className="controls">
         <div onClick={handlePlayPause}>{!playing ? (
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 cursor-pointer hover:stroke-orange-600">
@@ -100,6 +105,9 @@ const Wave = ({url, bpm}: IWaveProps) => {
           )}
         </div>
       </div>
+
+      {/********/
+      /** WAVE PROPS */}
       <div className={`flex text-left py-2`}> 
           <span className='basis-2/3'>... {bpm ? `${bpm} bpm` : ''} </span>
             
@@ -116,7 +124,6 @@ const Wave = ({url, bpm}: IWaveProps) => {
             </svg>
           </Link>
       </div>
-
     </>
   )
 }

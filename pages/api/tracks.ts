@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-
+/********/
+/** GET TRACKS WITH QUERY */
 export async function getTracks(query: any) {
 
   let esc = encodeURIComponent;
@@ -21,6 +22,8 @@ export async function getTracks(query: any) {
   }
 }
 
+/********/
+/** GET ALL TRACKS FOR MAP CAT TAG ...  */
 export async function getAllTracks() {
   try {
     const res = await fetch(`http://localhost:8080/tracks/all`)
@@ -33,7 +36,8 @@ export async function getAllTracks() {
   }
 }
 
-
+/********/
+/** POST TRACKS */
 export async function postTrack(payload: any) {
 
   await axios

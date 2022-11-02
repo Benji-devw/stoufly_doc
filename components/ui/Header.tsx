@@ -4,62 +4,51 @@ import { useEffect, useState } from "react"
 import Button from "../ui/Button"
 import Router from 'next/router';
 import { useRouter } from 'next/router'
-
+import Image from "next/image";
 
 
 const Header = () => {
 
   const router = useRouter()
   const {systemTheme, theme, setTheme} = useTheme()
-  const [mountedTheme, setMountedTheme] = useState(false)
+  const [mountedTheme, setMountedTheme] = useState<boolean>(false)
   const [query, setQuery] = useState<string>('');
-
-  const handleKeyPress = (e: any) => {
-    if (query === '' || query.length < 1) return null
-    else if (e.key === 'Enter') {
-      e.preventDefault()
-      router.query.search = query
-      router.push({ 
-          pathname: '/', 
-          query: { ...router.query, search: query } }, 
-          undefined, 
-          {})
-    }
-  }
-
-  const LinkFilter = ({children, val}: any) => {
-    return (
-      <Link href={``} legacyBehavior>
-        <a onClick={(e) => {
-          e.preventDefault(),
-          router.query.search = val, 
-          router.push({ 
-            pathname: '/', 
-            query: { ...router.query, search: val } }, 
-            undefined, 
-            {}
-        )}}>
-        {children}
-        </a>
-      </Link>
-    )
-  }
-  
+  const [isEmpty, setIsEmpty] = useState<boolean>(true);
 
 
   useEffect(() =>  {
-    if (!mountedTheme) {
-      setMountedTheme(true)
-    }
-  },[mountedTheme])
+    if (!mountedTheme) {setMountedTheme(true);}
+    if (query !== '' ) setIsEmpty(false);
+    else setIsEmpty(true);
+  }, [mountedTheme, query])
 
+
+  /********/
+  /** SEARCH BAR ENTER E.KEY */
+  // const handleKeyPress = (e: any) => {
+  //   if (query === null) return;
+  //   else if (e.key === 'Enter') {
+  //     e.preventDefault()
+  //     router.query.search = query
+  //     router.push({ 
+  //         pathname: '/', 
+  //         query: { ...router.query, search: query } }, 
+  //         undefined, 
+  //         {})
+  //   }
+  // }
+  
+
+  /********/
+  /** LINKS ARRAY */
   const navigation = [
     {label: 'Home', path: '/'},
     {label: 'Create', path: '/create'},
-    {label: 'Create', path: '/create'},
-    {label: 'Create', path: '/create'},
+    {label: 'Login', path: '/login'},
   ]
 
+  /********/
+  /** THEME CHANGER */
   const RenderThemeCanger = () => {
     const currentTheme = theme === 'system' ? systemTheme : theme;
     if (!mountedTheme) return null
@@ -80,44 +69,43 @@ const Header = () => {
   }
 
 
+
   return (
     <header className="container mx-auto p-2 flex flex-wrap sm:flex-row flex-col justify-between">
-      <div className="basis-1/4 flex items-center">01</div>
+      <div className="basis-1/4 flex items-center"><Image src="/StouflyDoc_Logo.svg" alt="logo" width={50} height={50} /><h3 className="text-xl font-bold relative bottom-1 ml-2">StouflyDoc</h3></div>
       
       <div className="basis-1/2">
           <form>   
             <label htmlFor="default-search" className="mb-2 text-sm font-medium text-zinc-900 sr-only dark:text-zinc-300">Search</label>
-            <div className="relative">
-                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                    <svg aria-hidden="true" className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <input type="search" value={query} id="default-search"  placeholder="Loop, jazz, 125bpm..."
-                  className="block p-4 pl-10 w-full text-sm outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" 
-                  onChange={(e) => { setQuery(e.target.value)}}
-                  onKeyPress={handleKeyPress}
-                  
-                  />
-                  <LinkFilter queryVal={'search'} val={query}>
-                    <span className="absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</span>
-                  </LinkFilter>
-
-                  {/* <Link href={``} legacyBehavior>
-                    <a onClick={(e) => {
-                      e.preventDefault(),
-                      router.query.search = query, 
-                      router.push({ 
-                        pathname: '/', 
-                        query: { ...router.query, search: query } }, 
-                        undefined, 
-                        {}
-                    )}}>
-                    </a>
-                  </Link> */}
-                {/* <button type="submit" className=" absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</button> */}
+            <div className="relative flex item-center">
+              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                  <svg aria-hidden="true" className="w-5 h-5 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+              {/********/
+              /** SEARCH BAR HEADER */}
+              <input type="search" required defaultValue={router.query.search ? router.query.search : ''} id="default-search"  placeholder="Loop, jazz, drop..."
+                className="block p-4 pl-10 w-full text-md outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" 
+                onChange={(e) => { setQuery(e.target.value)}}
+                // onKeyPress={handleKeyPress}
+                />
+                {/********/
+                /** SEARCH BUTTON HEADER */}
+                <button disabled={isEmpty ? true : false}
+                  onClick={(e) => {
+                    router.query.search = query
+                        e.preventDefault()
+                        router.push({ 
+                          pathname: '/', 
+                          query: { ...router.query, search: query } },
+                          undefined, {})
+                    }}>  <span className="absolute right-2.5 bottom-2.5 bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Search</span>
+                </button>
             </div>
         </form>
       </div>
 
+      {/********/
+      /** LINKS HEADER */}
       <div className="basis-1/4 flex items-center">
         {navigation.map((nav, id) => (
           <Link key={id} href={nav.path} className="mr-4 ml-4">{nav.label}</Link>
