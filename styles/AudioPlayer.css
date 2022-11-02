@@ -3,11 +3,11 @@
   height: 370px;
   width: 300px;
   transition: .3s;
-  border: var(--main-dark-t) solid 1px;
+  /* border: var(--main-dark-t) solid 1px; */
 }
-.card:hover {
-  border: var(--main-orange-600) solid 1px;
-}
+/* .card:hover {
+  border-color: var(--main-orange-600);
+} */
 
 .controls:hover {
   cursor: pointer;

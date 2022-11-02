@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Layout from '../components/ui/Layout'
 import type { NextPageWithLayout } from './_app'
 import Skeleton from '../components/ui/skeletonCard'
@@ -6,6 +6,7 @@ import { getTracks, getAllTracks } from './api/tracks';
 import AudioPlayer from '../components/AudioPlayer'
 import Link from 'next/link';
 import { useRouter } from 'next/router'
+import IntersectingObserver from '../components/ui/IntersectingObserver';
 
 
 
@@ -16,7 +17,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   const [tracks, setTracks] = useState<any>();
   const [openAccordion, setOpenAccordion] = useState(true);
   const [error, setError] = useState(false);
-
+  
   const [rangeMin, setRangeMin] = useState(!query.BpmMin ? 0 : query.BpmMin);
   const [rangeMax, setRangeMax] = useState(!query.BpmMax ? 200 : query.BpmMax);
   
@@ -28,22 +29,66 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   const [catActive, setCatActive] = useState(catList)
 
 
+    /*******/
+  /** HANDLE SCROLL MORE 1 */
+  // const HandleScrollMore = (e: any) => {
+  //   const { offsetHeight, scrollTop, scrollHeight} = e.target
+  //   if (offsetHeight + scrollTop === scrollHeight) {
+  //     setSkip(skip + 15)
+  //     router.push({ 
+  //       pathname: '/', 
+  //       query: { ...router.query, skip: skip +  15 } },
+  //       undefined, {})
+  //   }
+  // }
+      /*******/
+  /** HANDLE SCROLL MORE 2 */
+  // const [ skip, setSkip ] = useState<number>(15)
+  // const containerRef = useRef<any>()
+  // const [ ref, isVisible ] = IntersectingObserver({
+  //   root: null,       rootMargin: "0px",
+  //   threshold: 1.0,   ref: containerRef
+  // })
+  
+
+  
   useEffect(() => {
-    setLoading(true)
-    setTracks(res.props.res.state);
-    setTimeout(() => {
-    if (res.props.res.state.length > 0) {
-        setLoading(false);
-        setError(false);
-      } else {
-        setLoading(false);
-        setError(true)
-      }
-    }, 1000)
-  }, [ query.category, res, allTracks, router.query, catActive, tracks])
+    // if (isVisible) {
+    //   console.log(isVisible);
+    //   router.push({ 
+    //     pathname: '/', 
+    //     query: { ...router.query, skip: skip +  15 } },
+    //     undefined, { shallow: true})
+    // }
 
-console.log(res.props.res.state.length);
+      setLoading(true)
+      setTracks( res.props.res.state);
+      setTimeout(() => {
+        if (res.props.res.state.length > 0) {
+          setLoading(false);
+          setError(false);
+        } else {
+          setLoading(false);
+          setError(true)
+        }
+      }, 1000)
+    
 
+  }, [ query.category, res, allTracks, router.query, catActive, tracks, router])
+
+  
+  const [ skip, setSkip ] = useState<number>(15)
+  const handleLoadMore = (e: any) => {
+      e.preventDefault()
+      setSkip(skip + 15)
+      router.push({ 
+        pathname: '/', 
+        query: { ...router.query, skip: skip +  15 } },
+        undefined, { })
+  }  
+
+  console.log(skip);
+  
 
   const handleBpmMin = (val: any) => {
       router.query.BpmMin = val
@@ -69,6 +114,7 @@ console.log(res.props.res.state.length);
   return (
     <Layout page={"Home - Stouflydoc"}>
       <div className="min-h-screen place-items-center">
+      {/* <div className="place-items-center w-full todos-list"   onScroll={(e) => HandleScrollMore(e)}> */}
 
         {/********/
         /** ACCORDION FILTERS */}
@@ -118,7 +164,7 @@ console.log(res.props.res.state.length);
           
         {/********/
         /** ACTIVE QUERY FILTERS */}
-        <div className='w_full flex flex-wrap justify-center align-middle gap-6'>
+        <div className='container w_full flex flex-wrap justify-center align-middle gap-6'>
           <ul className='h-10 my-4 flex'>
             {Object.keys(router.query).map((item, i) => (
               <li key={i} className='cursor-pointer text-lg mx-2 px-2 py-1 rounded-xl opacity-50 hover:opacity-80 border border-orange-600 text-center flex align-text-middle'
@@ -138,19 +184,20 @@ console.log(res.props.res.state.length);
 
         {/********/
         /** DISPLAY */}
-        <div className="flex flex-wrap justify-center align-middle gap-6">
-          {loading ? (
-            [1,2,3,4,5,6,7,8].map((n) => <Skeleton style={{animationDelay: `${n/5}s`}} key={n}/>)
-          ) : (
-            error ? (
-              <h4 className='text-xl font-bold relative top-10'>Aucun résultat...</h4>
+        <div className="flex flex-wrap justify-center align-top gap-6" >
+            {loading ? ( [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map((n: any) => <Skeleton style={{animationDelay: `${n/5}s`}} key={n}/>)
             ) : (
-              tracks.map((track: any, id: number) => <AudioPlayer key={id} track={track} /> )
+              error ? ( <h4 className='text-xl font-bold relative top-10'>Aucun résultat...</h4>
+              ) : ( tracks.map((track: any, id: number) => <AudioPlayer key={id} track={track} /> ) )
             )
-          )
           } 
         </div>
       </div>
+
+      {/* <div ref={containerRef} className="test h-20"></div> */}
+        <button onClick={(e) => handleLoadMore(e)} type="button" className={` m-5 text-gray-500 py-2 px-5 rounded-sm`}>
+            Load more
+          </button>
     </Layout>
   )
 }
