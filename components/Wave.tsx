@@ -10,12 +10,12 @@ type IWaveProps = {
 
 const Wave = ({url, bpm}: IWaveProps) => {
    
-  const waveformRef = useRef<any>(null);
-  const wavesurfer = useRef<any>(null);
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [duration, setDuration] = useState('0:00')
+  const wavesurfer =                  useRef<any>(null);
+  const waveformRef =                 useRef<any>(null);
+  const [playing, setPlaying] =       useState(false);
+  const [duration, setDuration] =     useState('0:00')
+  const [isPlaying, setIsPlaying] =   useState(false)
   const [currentTime, setCurrentTime] = useState('0:00')
-  const [playing, setPlaying] = useState(false);
 
   /********/
   /** CALCULATE AND FORMATO TIME TRACKS */

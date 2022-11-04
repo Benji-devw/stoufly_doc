@@ -8,7 +8,7 @@ const AudioPlayer = ({track}: any) => {
   const router = useRouter()
   const [tags, setTags] = useState(track.tags.replace(/\s/g, '').split(','))
   return (
-    <div className="card fadeIn blurOut p-2 flex dark:bg-zinc-900 bg-zinc-300 rounded-md">
+    <div className="card fadeIn blurOut p-2 flex border hover:shadow-xl hover:border-orange-600 dark:hover:border-orange-600 dark:border-zinc-900 dark:bg-zinc-900 bg-gray-200 rounded-md">
 
       <div className="wave">
         {/********/
@@ -25,7 +25,7 @@ const AudioPlayer = ({track}: any) => {
 
       {/********/
       /** TAGS MAP */}
-      <div className="h-28 flex items-end">
+      <div className="h-28 flex items-end ">
         <div className={`tags w-max`}>
           {tags.map((tag: string[], id: number) => (
             <button key={id}
@@ -37,7 +37,7 @@ const AudioPlayer = ({track}: any) => {
                    query: { ...router.query, tag: tag } }, 
                    undefined, {})
              }}>
-           <span className="align-middle bg-orange-700 hover:bg-orange-800 rounded-md px-2 mr-1 mb-1">#{tag}</span>
+           <span className="bg-zinc-800 text-white dark:bg-orange-700 hover:bg-orange-800 rounded-md px-2 mr-1 mb-1">#{tag}</span>
          </button>
           ))}
           <br /><span className={`text-xs`}> By : {track.reporter} - Posted : {track.datePost.slice(0, 4)} </span>

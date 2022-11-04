@@ -1,6 +1,6 @@
 const Skeleton = ({style}: any) => {
   return (
-    <div style={style} className="skeleton p-2 flex dark:bg-zinc-900 bg-zinc-300 rounded-md">
+    <div style={style} className="skeleton p-2 flex dark:bg-zinc-900 bg-gray-200 rounded-md">
     <div className="image mb-2 flex items-center">
       <span className="h-36 w-2 mr-2 rounded-md dark:bg-orange-900 bg-orange-700"></span>
       <span className="h-28 w-2 mr-2 rounded-md dark:bg-orange-900 bg-orange-700"></span>
