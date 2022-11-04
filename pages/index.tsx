@@ -6,26 +6,26 @@ import { getTracks, getAllTracks } from './api/tracks';
 import AudioPlayer from '../components/AudioPlayer'
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import IntersectingObserver from '../components/ui/IntersectingObserver';
+// import IntersectingObserver from '../components/ui/IntersectingObserver';
 
 
 
 const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
 
   const router = useRouter()
+  const [error, setError] =     useState(false);
+  const [tracks, setTracks] =   useState<any>();
   const [loading, setLoading] = useState(true);
-  const [tracks, setTracks] = useState<any>();
   const [openAccordion, setOpenAccordion] = useState(true);
-  const [error, setError] = useState(false);
   
   const [rangeMin, setRangeMin] = useState(!query.BpmMin ? 0 : query.BpmMin);
   const [rangeMax, setRangeMax] = useState(!query.BpmMax ? 200 : query.BpmMax);
   
   /*******/
   /** Category Filter */
-  const tracksCat = allTracks.props.res;
-  const categorySet = new Set(tracksCat.state.map((cat: any )=> cat.category));
-  const catList = Array.from(categorySet).sort();
+  const tracksCat =     allTracks.props.res;
+  const categorySet =   new Set(tracksCat.state.map((cat: any )=> cat.category));
+  const catList =       Array.from(categorySet).sort();
   const [catActive, setCatActive] = useState(catList)
 
 
@@ -87,8 +87,6 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
         undefined, { })
   }  
 
-  console.log(skip);
-  
 
   const handleBpmMin = (val: any) => {
       router.query.BpmMin = val
@@ -156,9 +154,9 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
               {/********/
               /** RANGE FILTERS */}
               <input type="range" defaultValue={!query.BpmMin ? rangeMin : query.BpmMin} step={10} min="0" max="200" onChange={(e: any) => setRangeMin(e.target.value) } />
-              <button className=' mx-2 text-lg px-2 py-1 rounded-xl border border-orange-600 text-center' onClick={handleBpmMin}>{rangeMin}</button>
+              <button className=' mx-2 text-lg px-2 py-1 rounded-xl border border-orange-600 text-center' onClick={() => handleBpmMin("BpmMin")}>{rangeMin}</button>
               <input type="range" defaultValue={!query.BpmMax ? rangeMax : query.BpmMax} step={10} min="0" max="200" onChange={(e: any) => setRangeMax(e.target.value) } />
-              <button className=' mx-2 text-lg px-2 py-1 rounded-xl border border-orange-600 text-center' onClick={handleBpmMax}>{rangeMax}</button>
+              <button className=' mx-2 text-lg px-2 py-1 rounded-xl border border-orange-600 text-center' onClick={() => handleBpmMax("BpmMax")}>{rangeMax}</button>
           </div>
         </div>
           
@@ -195,7 +193,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
       </div>
 
       {/* <div ref={containerRef} className="test h-20"></div> */}
-        <button onClick={(e) => handleLoadMore(e)} type="button" className={` m-5 text-gray-500 py-2 px-5 rounded-sm`}>
+        <button onClick={(e) => handleLoadMore(e)} type="button" className={`m-5 py-2 px-5 rounded-sm mx-auto text-center`}>
             Load more
           </button>
     </Layout>
