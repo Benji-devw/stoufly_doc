@@ -12,23 +12,22 @@ const Wave = ({url, bpm}: IWaveProps) => {
    
   const wavesurfer =                  useRef<any>(null);
   const waveformRef =                 useRef<any>(null);
-  const [playing, setPlaying] =       useState(false);
-  const [duration, setDuration] =     useState('0:00')
   const [isPlaying, setIsPlaying] =   useState(false)
-  const [currentTime, setCurrentTime] = useState('0:00')
-
+  const [duration, setDuration] =     useState<number | string>('0:00')
+  const [currentTime, setCurrentTime] = useState<number | string>('0:00')
+  
   /********/
   /** CALCULATE AND FORMATO TIME TRACKS */
   const calculateCurrentTime = (value: any) => {
-    let seconds: any = Math.floor(value % 60);
-    let minutes = Math.floor((value / 60) % 60);
+    let seconds: number | string = Math.floor(value % 60);
+    let minutes: number | string = Math.floor((value / 60) % 60);
     if (seconds < 10) seconds = "0" + seconds;
     return minutes + ":" + seconds;
   }
   const calculateDuration = (value: any) => {
-    let seconds: any = Math.floor(value % 60);
-    let minutes = Math.floor((value / 60) % 60);
-    const milliseconds = Math.floor(value * 1000);
+    let seconds: number | string = Math.floor(value % 60);
+    let minutes: number | string = Math.floor((value / 60) % 60);
+    const milliseconds: number | string = Math.floor(value * 1000);
     if (seconds < 10) {
         if (seconds <= 0) seconds = `0${Math.floor(milliseconds / 10)}`;
         else seconds = "0" + seconds;
@@ -44,6 +43,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
         if (wavesurfer.current) wavesurfer.current.destroy();
       }
   }, [])
+
 
   /********/
   /** WAVE CREATE */
@@ -65,45 +65,52 @@ const Wave = ({url, bpm}: IWaveProps) => {
   
       wavesurfer.current.load(url);
       wavesurfer.current.on("ready", () => {
-        setDuration(calculateDuration(wavesurfer.current.getDuration()))
+        // setDuration(calculateDuration(wavesurfer.current.getDuration()))
+        setDuration(wavesurfer.current.getDuration().toFixed(1))
         wavesurfer.current.setVolume(1);
-        if (isPlaying) wavesurfer.current.playPause()
-        else wavesurfer.current.pause(); setCurrentTime('0:00');
       });
       wavesurfer.current.on("audioprocess", () => {
-        setCurrentTime(calculateCurrentTime(wavesurfer.current.getCurrentTime()))
+        // setCurrentTime(calculateCurrentTime(wavesurfer.current.getCurrentTime()))
+        setCurrentTime(wavesurfer.current.getCurrentTime().toFixed(1))
       })
+      wavesurfer.current.on("play", () => setIsPlaying(true));
+      wavesurfer.current.on("pause", () => setIsPlaying(false));
     }
   };
 
   /********/
   /** WAVE PLAY AND PAUSE */
-  const handlePlayPause = () => {
-    setPlaying(!playing);
-    wavesurfer.current.playPause();
+  const togglePlayback = () => {
+    if (!isPlaying) {
+      wavesurfer.current.play();
+    } else {
+      wavesurfer.current.pause();
+    }
   };
-
 
 
   return (
     <>
       {/********/
       /** WAVE DISPLAY */}
-      <div ref={waveformRef} onClick={() => setIsPlaying(!isPlaying)}></div>
+      <div ref={waveformRef}></div>
       
       {/********/
       /** WAVE PLAY AND PAUSE */}
       <div className="controls">
-        <div onClick={handlePlayPause}>{!playing ? (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 cursor-pointer hover:stroke-orange-600">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8  cursor-pointer hover:stroke-orange-600">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-            </svg>
-          )}
-        </div>
+        {!isPlaying ? (
+          <div onClick={togglePlayback}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 cursor-pointer hover:stroke-orange-600">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+              </svg>
+          </div>
+        ) : (
+          <div onClick={togglePlayback}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8  cursor-pointer hover:stroke-orange-600">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+              </svg>
+          </div>
+        )}
       </div>
 
       {/********/
