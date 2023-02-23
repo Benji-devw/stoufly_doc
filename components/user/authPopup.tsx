@@ -19,7 +19,7 @@ const AuthPopup = (url: string, title: string) => {
   const newWindow = window.open(
     url,
     title,
-    `width=${500 / systemZoom},height=${550 / systemZoom
+    `width=${500 / systemZoom},height=${350 / systemZoom
     },top=${top},left=${left}`
   );
 

@@ -9,23 +9,26 @@
   border-color: var(--main-orange-600);
 } */
 
-.controls:hover {
+.card__controls:hover {
   cursor: pointer;
 }
-.controls:hover svg {
+.card__controls:hover svg {
   stroke: var(--main-orange-600) !important;
 }
 
-.download:hover svg {
+.card__download:hover svg {
   stroke: var(--main-orange-600) !important;
 }
-.time {
+.card__time {
   position: absolute;
   left: -25px;
   /* stroke: var(--main-orange) !important; */
 }
-.tags span {
-  padding: .1rem .5rem .2rem .5rem;
+.card__tags button {
+  margin: .2rem;
+}
+.card__tags span {
+  padding: .1rem .5rem .1rem .5rem;
 }
 
 

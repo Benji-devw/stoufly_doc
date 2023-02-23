@@ -4,15 +4,16 @@
 
 @import './_libs/appGuruz.css';
 @import './AudioPlayer.css';
+@import './RangeFilter.css';
 
 
 :root {
-  --main-orange-600: #ea580c;
+  --main-orange-600: #F27329;
   --main-light: #F5F5F5;
-  --main-dark: #252525;
+  --main-dark: #060A0D;
 
   --main-light-t: #f5f5f544;
-  --main-dark-t: #111111ee;
+  --main-dark-t: #060a0da9;
 }
 
 
@@ -45,6 +46,7 @@ a {
 }
 
 
+
 .accordion_hov:hover {
   transform: rotate(180deg);
 }
@@ -57,6 +59,20 @@ a {
 .accordionClosed {
   height: 50px;
 }
+
+
+
+#track__section {
+  padding: 0 3rem 0 3rem;
+  max-width: 2560px;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  #track__section {padding: 0.5rem;}
+}
+
+
+
 
 
 

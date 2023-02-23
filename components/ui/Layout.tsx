@@ -13,7 +13,7 @@ const Layout = ({children, page}: any) => {
       </Head>
 
       <Header />
-      <main className={'main container mx-auto fadeIn min-h-screen flex-col'}>
+      <main className={'main mx-auto fadeIn min-h-screen flex-col'}>
         {children}
       </main>
       <Footer />

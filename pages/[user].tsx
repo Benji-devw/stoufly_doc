@@ -48,7 +48,7 @@ export default function User() {
 
           {/* <div className={`w-full mx-3 my-2`}></div> */}
           
-        </div>        
+        </div>
       </Layout>
     )
 }
