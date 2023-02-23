@@ -43,7 +43,7 @@
 .range__slider__button {
   /* background-color: #18181b; */
   border: 2px solid #ea580c;
-  box-shadow: 1px 1px 5px 1px var(--main-dark-t);
+  /* box-shadow: 1px 1px 5px 1px var(--main-dark-t); */
   /* height: 40px; */
   padding: 0 0.5rem;
   cursor: pointer;
@@ -83,7 +83,7 @@
   background-color: #18181b;
   border: 2px solid #ea580c;
   border-radius: 50%;
-  box-shadow: 1px 1px 5px 1px var(--main-dark-t);
+  /* box-shadow: 1px 1px 5px 1px var(--main-dark-t); */
   cursor: pointer;
   height: 22px;
   width: 22px;
@@ -97,7 +97,7 @@
   background-color: #18181b;
   border: 2px solid #ea580c;
   border-radius: 50%;
-  box-shadow: 1px 1px 5px 1px var(--main-dark-t);
+  /* box-shadow: 1px 1px 5px 1px var(--main-dark-t); */
   cursor: pointer;
   height: 22px;
   width: 22px;

@@ -30,7 +30,7 @@ export const BpmRangeFilter: FC<BpmRangeFilterProps> = (props) => {
             setMinVal(value);
             minValRef.current = value;
           }}
-          className="range__thumb range__thumb--left"
+          className="range__thumb range__thumb--left shadow-md"
         />
         <input
           type="range"
@@ -43,14 +43,14 @@ export const BpmRangeFilter: FC<BpmRangeFilterProps> = (props) => {
             setMaxVal(value);
             maxValRef.current = value;
           }}
-          className="range__thumb range__thumb--right"
+          className="range__thumb range__thumb--right shadow-md"
         />
 
         <div className="flex range__slider">
-          <div className="range__slider__track"></div>
+          <div className="range__slider__track dark:bg-zinc-100 bg-orange-700 shadow-md"></div>
           <div className="range__slider__left-value">bpm min: {minVal}</div>
           <div className="range__slider__right-value">bpm max: {maxVal}</div>
-          <button className="range__slider__button mx-auto rounded-md mt-4" onClick={handleChange}>Filtrer</button>
+          <button className="range__slider__button mx-auto rounded-md mt-4  shadow-md" onClick={handleChange}>Filtrer</button>
 
         </div>
       </div>

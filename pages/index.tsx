@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import Layout from '../components/ui/Layout'
+import Layout from '@/components/ui/Layout'
 import type { NextPageWithLayout } from './_app'
-import Skeleton from '../components/ui/skeletonCard'
+import Skeleton from '@/components/ui/skeletonCard'
 import { getTracks, getAllTracks } from './api/tracks';
-import AudioPlayer from '../components/AudioPlayer'
+import AudioPlayer from '@/components/AudioPlayer'
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import {BpmRangeFilter} from '../components/ui/RangeFilter';
+import {BpmRangeFilter} from '@/components/ui/RangeFilter';
 
 // import IntersectingObserver from '../components/ui/IntersectingObserver';
 
@@ -38,7 +38,10 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
 
   useEffect(() => {
 
-      // setLoading(true)
+    // if (router.query.search) {
+    //   setLoading(true)
+    // }
+
       setTracks(res.props.res.state);
       setCounter(res.props.res.state.length)
 
@@ -59,10 +62,10 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
       // e.preventDefault()
       const newSkip = skip + 9;
       setSkip(newSkip);
-      router.push({
-        pathname: '/',
-        query: { ...router.query, skip: newSkip } },
-        undefined, {shallow: true})
+      // router.push({
+      //   pathname: '/',
+      //   query: { ...router.query, skip: newSkip } },
+      //   undefined, {shallow: true})
   }  
 
   function getResultRangeBpm(value:any) {
@@ -90,12 +93,11 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   return (
     <Layout page={"Home - Stouflydoc"}>
       <div className="min-h-screen place-items-center">
-        {/* <div className="place-items-center w-full todos-list"   onScroll={(e) => HandleScrollMore(e)}> */}
 
-        <div className="container mx-auto section-filter">
+        <div className="container mx-auto filters__Section">
           {/********/
           /** ACCORDION FILTERS */}
-          <div className={`relative accordion grid grid-flow-col w-2/3 mx-auto m-10 pl-12 dark:bg-zinc-900 bg-zinc-300`}>
+          <div className={`relative accordion grid grid-flow-col w-2/3 mx-auto m-10 pl-12 dark:bg-zinc-900 bg-zinc-100 rounded-md p-2 shadow-md`}>
             <button className="absolute left-0 mx-5 my-3 cursor-pointer" onClick={() => setOpenAccordion(!openAccordion)}>
               {!openAccordion ?
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov">
@@ -117,7 +119,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
                     <a onClick={(e) => {
                       e.preventDefault(),
                       setSkip(9)
-                      setLoading(true)
+                      // setLoading(true)
                       router.query.category = cat, 
                       router.push( {  pathname: '/',  query: { ...router.query, category: cat } },  undefined,  {} )
                     }}> 
@@ -134,11 +136,6 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
                 {/********/
                 /** RANGE FILTERS */}
                 <BpmRangeFilter min={0} max={200} getResultRangeBpm={getResultRangeBpm}/>
-
-                {/* <input type="range" defaultValue={!query.BpmMin ? rangeMin : query.BpmMin} step={10} min="0" max="200" onChange={(e: any) => setRangeMin(e.target.value) } />
-                <button className=' mx-2 text-lg px-2 py-1 rounded-xl border border-orange-600 text-center' onClick={() => handleBpmMin("BpmMin")}>{rangeMin}</button>
-                <input type="range" defaultValue={!query.BpmMax ? rangeMax : query.BpmMax} step={10} min="0" max="200" onChange={(e: any) => setRangeMax(e.target.value) } />
-                <button className=' mx-2 text-lg px-2 py-1 rounded-xl border border-orange-600 text-center' onClick={() => handleBpmMax("BpmMax")}>{rangeMax}</button> */}
             </div>
           </div>
 
@@ -168,6 +165,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
         {/********/
         /** DISPLAY */}
         <div id="track__section" className="flex flex-wrap align-top gap-6 mx-auto" >
+          <div className="w-full tracks__Reasult font-bold">Results match : <code>{counter}</code></div>
           {
               loading ? ( [...Array(skip < counter ? skip : counter)].map((n: any, id: number) => <Skeleton key={id} style={{animationDelay: `${id/5}s`}}/>)
             ) : (
@@ -178,14 +176,13 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
         </div>
       </div>
 
-      {/* <div ref={containerRef} className="test h-20"></div> */}
-      {skip < counter && 
-        <div className="flex full-w justify-center">
-          <button onClick={(e) => handleLoadMore(e)} type="button" className={`m-5 py-2 px-5 bg-orange-800 hover:bg-orange-700 rounded-sm mx-auto text-center`}>
-            Load more
-          </button>
-        </div>
-      }
+      <div className="flex full-w justify-center">
+        {skip < counter && 
+            <button onClick={(e) => handleLoadMore(e)} type="button" className={`m-5 py-2 px-5 bg-orange-800 hover:bg-orange-700 rounded-sm mx-auto text-center`}>
+              Load more
+            </button>
+        }
+      </div>
     </Layout>
   )
 }

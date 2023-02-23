@@ -8,7 +8,7 @@
 
 
 :root {
-  --main-orange-600: #F27329;
+  --main-orange-600: #ea580c;
   --main-light: #F5F5F5;
   --main-dark: #060A0D;
 
@@ -44,7 +44,10 @@ a {
 * {
   box-sizing: border-box;
 }
-
+code {
+  font-family: -apple-system;
+  color: var(--main-orange-600);
+}
 
 
 .accordion_hov:hover {
@@ -72,8 +75,16 @@ a {
 }
 
 
+.search__Button {
+  position: absolute;
+  right: .7rem;
+  bottom: .7rem;
+}
 
 
+.track__Post__Form input:focus {
+  border: 1px solid var(--main-orange-600);
+}
 
 
 

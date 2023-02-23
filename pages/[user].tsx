@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getAllTracks } from './api/tracks';
-import Layout from '../components/ui/Layout';
-import AudioPlayer from "../components/AudioPlayer";
-import Skeleton from '../components/ui/skeletonCard'
+import Layout from '@/components/ui/Layout';
+import AudioPlayer from "@/components/AudioPlayer";
+import Skeleton from '@/components/ui/skeletonCard'
 import { useRouter } from 'next/router'
 
 import { useSession, signIn, signOut, getSession  } from "next-auth/react"
@@ -12,7 +12,6 @@ export default function User() {
 
   const router = useRouter()
   const { data: session, status } = useSession()
-  console.log(status);
   const [datas, setDatas] = useState([])
 
   

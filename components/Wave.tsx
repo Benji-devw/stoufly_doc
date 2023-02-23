@@ -90,11 +90,11 @@ const Wave = ({url, bpm}: IWaveProps) => {
     <>
       {/********/
       /** WAVE DISPLAY */}
-      <div ref={waveformRef}></div>
+      <div ref={waveformRef} className="bg-zinc-900 rounded-md p-2"></div>
       
       {/********/
       /** WAVE PLAY AND PAUSE */}
-      <div className="card__controls">
+      <div className="card__controls p-2">
         {!isPlaying ? (
           <div onClick={togglePlayback}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 cursor-pointer hover:stroke-orange-600">
@@ -112,7 +112,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
 
       {/********/
       /** WAVE PROPS */}
-      <div className={`flex text-left py-2`}> 
+      <div className={`flex text-left p-2`}> 
           <span className='basis-2/3'>... {bpm ? `${bpm} bpm` : ''} </span>
             
           <div className='basis-2/3 relative'> 
