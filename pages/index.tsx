@@ -87,8 +87,6 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   }  
 
 
-  
-  
 
   return (
     <Layout page={"Home - Stouflydoc"}>
@@ -119,7 +117,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
                     <a onClick={(e) => {
                       e.preventDefault(),
                       setSkip(9)
-                      // setLoading(true)
+                      setLoading(true)
                       router.query.category = cat, 
                       router.push( {  pathname: '/',  query: { ...router.query, category: cat } },  undefined,  {} )
                     }}> 
