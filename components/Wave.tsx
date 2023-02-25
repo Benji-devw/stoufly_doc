@@ -1,5 +1,5 @@
 // import WaveSurfer from "wavesurfer.js";
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, createRef } from 'react'
 import Link from 'next/link';
 
 type IWaveProps = {
@@ -11,10 +11,11 @@ type IWaveProps = {
 const Wave = ({url, bpm}: IWaveProps) => {
    
   const wavesurfer =                  useRef<any>(null);
-  const waveformRef =                 useRef<any>(null);
+  const waveformRef =                 createRef<any>();
   const [isPlaying, setIsPlaying] =   useState(false)
   const [duration, setDuration] =     useState<number | string>('0:00')
   const [currentTime, setCurrentTime] = useState<number | string>('0:00')
+  const [test, setTest] = useState()
   
   /********/
   /** CALCULATE AND FORMATO TIME TRACKS */
@@ -36,23 +37,23 @@ const Wave = ({url, bpm}: IWaveProps) => {
     // }
 
 
-  
   useEffect(() => {
-      return () => {
-        createWave()
-        if (wavesurfer.current) wavesurfer.current.destroy();
-      }
-  }, [])
+    
+    return () => {
+      createWave()
+      if (wavesurfer.current) wavesurfer.current.destroy();
+    }
+  }, [waveformRef, wavesurfer.current])
 
-
+  
   /********/
   /** WAVE CREATE */
   const createWave = async () => {
+    // console.log(waveformRef.current);
     const WaveSurfer = (await import("wavesurfer.js")).default;
     if (!wavesurfer.current) {
       wavesurfer.current = WaveSurfer.create({
-        // container: waveformRef.current,
-        container: "#waveform",
+        container: waveformRef.current,
         waveColor: '#ea580c',
         progressColor: '#9a3412',
         // cursorColor: 'black',
@@ -86,6 +87,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
      else wavesurfer.current.pause();
   };
 
+  
 
   return (
     <>
