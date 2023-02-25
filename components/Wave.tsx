@@ -38,12 +38,11 @@ const Wave = ({url, bpm}: IWaveProps) => {
 
 
   useEffect(() => {
-    
     return () => {
       createWave()
       if (wavesurfer.current) wavesurfer.current.destroy();
     }
-  }, [waveformRef, wavesurfer.current])
+  }, [])
 
   
   /********/
