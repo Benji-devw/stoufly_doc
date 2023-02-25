@@ -51,7 +51,8 @@ const Wave = ({url, bpm}: IWaveProps) => {
     const WaveSurfer = (await import("wavesurfer.js")).default;
     if (!wavesurfer.current) {
       wavesurfer.current = WaveSurfer.create({
-        container: waveformRef.current,
+        // container: waveformRef.current,
+        container: "#waveform",
         waveColor: '#ea580c',
         progressColor: '#9a3412',
         // cursorColor: 'black',
@@ -90,7 +91,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
     <>
       {/********/
       /** WAVE DISPLAY */}
-      <div ref={waveformRef} className="wave bg-zinc-900 rounded-md p-2"></div>
+      <div ref={waveformRef} id="waveform" className="wave bg-zinc-900 rounded-md p-2"></div>
       
       {/********/
       /** WAVE PLAY AND PAUSE */}
