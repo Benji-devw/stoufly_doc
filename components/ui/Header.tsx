@@ -82,7 +82,7 @@ const Header = () => {
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <svg aria-hidden="true" className="w-6 h-6 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
               </div>
-              <input type="search" required defaultValue={router.query.search ? router.query.search : ''} id="default-search"  placeholder="Loop, jazz, drop..."
+              <input type="search" required defaultValue={router.query.search ? router.query.search : ''} id="default-search"  placeholder="Loop, jazz, drop, artiste..."
                 className="block caret-orange-600 p-2 pl-10 w-full text-md outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" 
                 onChange={(e) => { setQuery(e.target.value)}}
                 // onKeyPress={handleKeyPress}
@@ -125,7 +125,7 @@ const Header = () => {
                       {/* <li className="p-2">Post Sample</li> */}
                       {/* <Link href={nav.path} className="mx-4">{nav.label}</Link> */}
                       {/* <li className="p-2">Settings</li> */}
-                      <button onClick={() => signOut()} className="p-2 border-t border-zinc-900 dark:border-gray-200 hover:text-orange-600">Logout</button>      
+                      <button onClick={() => signOut()} className="p-2 rounded-md border-zinc-900 dark:border-gray-200 hover:text-orange-600">Logout</button>      
                     </ul>
                   </div>
                 }

@@ -16,7 +16,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   
   const router = useRouter()
   const [error, setError] =     useState<boolean>(false);
-  const [tracks, setTracks] =   useState<any>();
+  const [tracks, setTracks] =   useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [openAccordion, setOpenAccordion] = useState<boolean>(true);
 
@@ -30,32 +30,29 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
 
   /*******/
   /** Limit & counter */
-  const [counter, setCounter] = useState<number>(0);
+  const [counter, setCounter] = useState<number>(9);
   const [ skip, setSkip ] = useState<number>(9)
   const [ currentPos, setCurrentPos ] = useState<number>(9)
 
   
 
   useEffect(() => {
+    const datas = res.props.res.state
+    setTracks(datas);
+    setTimeout(() => {
+      if (res.props.res.state.length > 0) {
+        setLoading(false);
+        setError(false);
+        setCounter(datas.length)
+      } else {
+        setLoading(false);
+        setError(true)
+      }
+    }, 1000);
 
-    // if (router.query.search) {
-    //   setLoading(true)
-    // }
 
-      setTracks(res.props.res.state);
-      setCounter(res.props.res.state.length)
 
-      setTimeout(() => {
-        if (res.props.res.state.length > 0) {
-          setLoading(false);
-          setError(false);
-        } else {
-          setLoading(false);
-          setError(true)
-        }
-      }, 1000)
-
-  }, [ query.category, res, allTracks, router.query, catActive, tracks, router, currentPos, counter, skip])
+  }, [ query.category, res, allTracks, router.query, catActive, tracks, router, currentPos, loading] )
 
   
   const handleLoadMore = (e: any) => {
@@ -118,6 +115,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
                       e.preventDefault(),
                       setSkip(9)
                       setLoading(true)
+                      setCounter(tracks.length)
                       router.query.category = cat, 
                       router.push( {  pathname: '/',  query: { ...router.query, category: cat } },  undefined,  {} )
                     }}> 

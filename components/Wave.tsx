@@ -90,7 +90,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
     <>
       {/********/
       /** WAVE DISPLAY */}
-      <div ref={waveformRef} className="bg-zinc-900 rounded-md p-2"></div>
+      <div ref={waveformRef} className="wave bg-zinc-900 rounded-md p-2"></div>
       
       {/********/
       /** WAVE PLAY AND PAUSE */}
