@@ -166,7 +166,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
               loading ? ( [...Array(skip < counter ? skip : counter)].map((n: any, id: number) => <Skeleton key={id} style={{animationDelay: `${id/5}s`}}/>)
             ) : (
               error ? ( <h4 className='text-xl font-bold relative top-10'>Aucun résultat...</h4>
-              ) : ( tracks.slice(0, skip).map((track: any, id: number) => <AudioPlayer key={id} track={track} /> ) )
+              ) : ( tracks.slice(0, skip).map((track: any, id: number) => <AudioPlayer key={id} track={track} />  ) )
             )
           }
         </div>
