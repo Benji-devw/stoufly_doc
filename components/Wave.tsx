@@ -10,12 +10,11 @@ type IWaveProps = {
 
 const Wave = ({url, bpm}: IWaveProps) => {
    
-  const wavesurfer =                  useRef<any>(null);
+  const wavesurform =                  useRef<any>(null);
   const waveformRef =                 createRef<any>();
   const [isPlaying, setIsPlaying] =   useState(false)
   const [duration, setDuration] =     useState<number | string>('0:00')
   const [currentTime, setCurrentTime] = useState<number | string>('0:00')
-  const [test, setTest] = useState()
   
   /********/
   /** CALCULATE AND FORMATO TIME TRACKS */
@@ -39,10 +38,10 @@ const Wave = ({url, bpm}: IWaveProps) => {
 
   useEffect(() => {
     return () => {
+      if (wavesurform.current) wavesurform.current.destroy();
       createWave()
-      if (wavesurfer.current) wavesurfer.current.destroy();
     }
-  }, [])
+  }, [wavesurform, waveformRef.current])
 
   
   /********/
@@ -50,8 +49,8 @@ const Wave = ({url, bpm}: IWaveProps) => {
   const createWave = async () => {
     // console.log(waveformRef.current);
     const WaveSurfer = (await import("wavesurfer.js")).default;
-    if (!wavesurfer.current) {
-      wavesurfer.current = WaveSurfer.create({
+    if (!wavesurform.current) {
+      wavesurform.current = WaveSurfer.create({
         container: waveformRef.current,
         waveColor: '#ea580c',
         progressColor: '#9a3412',
@@ -61,29 +60,32 @@ const Wave = ({url, bpm}: IWaveProps) => {
         responsive: true,
         hideScrollbar: true,
         barGap: 3,
-        barRadius: 2
+        barRadius: 2,
+        height: 122,
+        normalize: true,
+        backend: "WebAudio",
       });
   
-      wavesurfer.current.load(url);
-      wavesurfer.current.on("ready", () => {
-        // setDuration(calculateDuration(wavesurfer.current.getDuration()))
-        setDuration(wavesurfer.current.getDuration().toFixed(1))
-        wavesurfer.current.setVolume(1);
+      wavesurform.current.load(url);
+      wavesurform.current.on("ready", () => {
+        // setDuration(calculateDuration(wavesurform.current.getDuration()))
+        setDuration(wavesurform.current.getDuration().toFixed(1))
+        wavesurform.current.setVolume(1);
       });
-      wavesurfer.current.on("audioprocess", () => {
-        // setCurrentTime(calculateCurrentTime(wavesurfer.current.getCurrentTime()))
-        setCurrentTime(wavesurfer.current.getCurrentTime().toFixed(1))
+      wavesurform.current.on("audioprocess", () => {
+        // setCurrentTime(calculateCurrentTime(wavesurform.current.getCurrentTime()))
+        setCurrentTime(wavesurform.current.getCurrentTime().toFixed(1))
       })
-      wavesurfer.current.on("play", () => setIsPlaying(true));
-      wavesurfer.current.on("pause", () => setIsPlaying(false));
+      wavesurform.current.on("play", () => setIsPlaying(true));
+      wavesurform.current.on("pause", () => setIsPlaying(false));
     }
   };
 
   /********/
   /** WAVE PLAY AND PAUSE */
   const togglePlayback = () => {
-    if (!isPlaying) wavesurfer.current.play();
-     else wavesurfer.current.pause();
+    if (!isPlaying) wavesurform.current.play();
+     else wavesurform.current.pause();
   };
 
   
