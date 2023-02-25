@@ -49,7 +49,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
   const createWave = async () => {
     // console.log(waveformRef.current);
     const WaveSurfer = (await import("wavesurfer.js")).default;
-    if (!wavesurform.current) {
+    if (!wavesurform.current) { 
       wavesurform.current = WaveSurfer.create({
         container: waveformRef.current,
         waveColor: '#ea580c',
