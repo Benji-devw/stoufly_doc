@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, createRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link';
 
 
-type IWaveProps = {
+interface IWaveProps {
   url: string
   bpm: number
 }
@@ -15,6 +15,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
   const [isPlaying, setIsPlaying] =   useState(false)
   const [duration, setDuration] =     useState<number | string>('0:00')
   const [currentTime, setCurrentTime] = useState<number | string>('0:00')
+
   
   /********/
   /** CALCULATE AND FORMATO TIME TRACKS */
@@ -36,13 +37,12 @@ const Wave = ({url, bpm}: IWaveProps) => {
     // }
 
 
-  useEffect(() => {
-    return () => {
-      createWave()
-      if (waveform.current) waveform.current.destroy();
-    }
-  }, [])
-
+  // useEffect(() => {
+  //   return () => {
+  //     if (waveform.current) waveform.current.destroy();
+  //   }
+  // }, [])
+  
   
   /********/
   /** WAVE CREATE */
@@ -79,6 +79,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
       waveform.current.on("pause", () => setIsPlaying(false));
     }
   };
+  createWave()
 
   /********/
   /** WAVE PLAY AND PAUSE */
