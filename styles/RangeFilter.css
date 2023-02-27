@@ -1,4 +1,7 @@
 
+.range {
+  padding: 0 .5rem;
+}
 .range__slider {
   position: relative;
   width: 180px;
@@ -42,7 +45,7 @@
 
 .range__slider__button {
   /* background-color: #18181b; */
-  border: 2px solid #ea580c;
+  border: 1px solid #ea580c;
   /* box-shadow: 1px 1px 5px 1px var(--main-dark-t); */
   /* height: 40px; */
   padding: 0 0.5rem;

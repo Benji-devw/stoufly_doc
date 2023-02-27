@@ -20,7 +20,7 @@ const Header = () => {
   const [showLogSettings, setShowLogSettings] = useState<boolean>(false);
 
 
-  useEffect(() =>  {
+  useEffect(() => {
     if (!mountedTheme) setMountedTheme(true);
     if (query !== '' ) setIfQueryIsEmpty(false);
     else setIfQueryIsEmpty(true);
@@ -74,24 +74,24 @@ const Header = () => {
       </div>
       
       <div className="basis-1/2">
-          <form>   
+          <form>
               {/********/
               /** SEARCH BAR HEADER */}
-            <div className="Search_Bar relative flex p-2">
+            <div className="Search_Bar relative flex m-2">
               <label htmlFor="Default-Search" className="mb-2 text-sm font-medium text-zinc-900 sr-only dark:text-zinc-300">Search</label>
               <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <svg aria-hidden="true" className="w-6 h-6 text-zinc-500 dark:text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
               </div>
               <input type="search" required defaultValue={router.query.search ? router.query.search : ''} id="default-search"  placeholder="Loop, jazz, drop, artiste..."
                 className="block caret-orange-600 p-2 pl-10 w-full text-md outline outline-offset-0 outline-0 text-zinc-900 bg-zinc-50 rounded-lg border border-zinc-600  focus:border-orange-600 dark:bg-zinc-900 dark:border-zinc-600 dark:placeholder-zinc-600 dark:text-white dark:focus:ring-orange-600 dark:focus:border-orange-600" 
-                onChange={(e) => { setQuery(e.target.value)}}
+                onChange={(e) => { setQuery(e.target.value.replace(/\s+/g, ' ').trim())}}
                 // onKeyPress={handleKeyPress}
                 />
                 {/********/
                 /** SEARCH BUTTON HEADER */}
                 <button disabled={ifQueryisEmpty ? true : false}
                   onClick={(e) => {
-                    router.query.search = query
+                    router.query.search = query.replace(/\s+/g, ' ').trim()
                         e.preventDefault()
                         router.push({ 
                           pathname: '/', 
@@ -119,13 +119,13 @@ const Header = () => {
                 {showLogSettings && 
                   <div className="Auth_Settings z-50 w-48 text-center p-2 absolute right-20 top-16 bg-zinc-900 border border-orange-600 dark:bg-zinc-900 rounded-md shadow-md">
                     <ul className="flex flex-col justify-end">
-                      <li className="pb-4 p-2 border-b border-zinc-900 dark:border-gray-200 text-center">{session.user!.name}</li>
-                      <Link href={`${session.user!.name}`} onClick={() => HandleLogSettings()} className="mx-4 p-2 hover:text-orange-600">Dashboard</Link>
+                      <li className="pb-4 p-2 border-b border-orange-900 dark:border-gray-200 text-center">{session.user!.name}</li>
+                      <Link href={`${session.user!.name!.replace(/\s+/g, '-').trim()}`} onClick={() => HandleLogSettings()} className="mx-4 p-2 hover:text-orange-600">Dashboard</Link>
                       <Link href={`${"/post"}`} className="mx-4 p-2 hover:text-orange-600">Post Sample</Link>
                       {/* <li className="p-2">Post Sample</li> */}
                       {/* <Link href={nav.path} className="mx-4">{nav.label}</Link> */}
                       {/* <li className="p-2">Settings</li> */}
-                      <button onClick={() => signOut()} className="p-2 rounded-md border-zinc-900 dark:border-gray-200 hover:text-orange-600">Logout</button>      
+                      <button onClick={() => signOut()} className="p-2 border-t border-orange-900 dark:border-gray-200 text-center hover:text-orange-600">Logout</button>      
                     </ul>
                   </div>
                 }

@@ -49,11 +49,21 @@ code {
   color: var(--main-orange-600);
 }
 
-
-.accordion_hov:hover {
-  transform: rotate(180deg);
+h1 {
+  font-size: 28px;
+  font-weight: 100;
+  line-height: 37px;
+  margin-top: 2rem;
+  margin-left: 4%;
+  margin-right: 4%;
+  padding: 1rem 1rem;
+  /* border-bottom: 1px solid red; */
 }
-.accordion {
+
+/* .accordion_hov:hover {
+  transform: rotate(180deg);
+} */
+/* .accordion {
   overflow: hidden;
 }
 .accordionOpened {
@@ -61,7 +71,7 @@ code {
 }
 .accordionClosed {
   height: 50px;
-}
+} */
 
 
 
@@ -77,8 +87,8 @@ code {
 
 .search__Button {
   position: absolute;
-  right: .7rem;
-  bottom: .7rem;
+  right: .2rem;
+  bottom: .2rem;
 }
 
 

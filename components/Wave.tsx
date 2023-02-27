@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 
 interface IWaveProps {
-  url: string
-  bpm: number
+  url: string;
+  bpm: number;
 }
 
 
@@ -12,9 +12,9 @@ const Wave = ({url, bpm}: IWaveProps) => {
    
   const waveform =                  useRef<WaveSurfer | any>();
   const waveformRef =                 useRef<WaveSurfer | any>();
-  const [isPlaying, setIsPlaying] =   useState(false)
-  const [duration, setDuration] =     useState<number | string>('0:00')
-  const [currentTime, setCurrentTime] = useState<number | string>('0:00')
+  const [isPlaying, setIsPlaying] =   useState(false);
+  const [duration, setDuration] =     useState<number | string>('0:00');
+  const [currentTime, setCurrentTime] = useState<number | string>('0:00');
 
   
   /********/
@@ -37,14 +37,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
     // }
 
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (waveform.current) waveform.current.destroy();
-  //   }
-  // }, [])
-  
-  
-  /********/
+      /********/
   /** WAVE CREATE */
   const createWave = async () => {
     const WaveSurfer = (await import("wavesurfer.js")).default;
@@ -54,32 +47,46 @@ const Wave = ({url, bpm}: IWaveProps) => {
         waveColor: '#ea580c',
         progressColor: '#9a3412',
         // cursorColor: 'black',
-        cursorWidth: 1,
+        cursorWidth: 2,
         barWidth: 3,
         responsive: true,
         hideScrollbar: true,
-        barGap: 3,
+        barGap: 2,
         barRadius: 2,
-        height: 122,
+        // height: 122,
         normalize: true,
         backend: "WebAudio",
       });
   
       waveform.current.load(url);
       waveform.current.on("ready", () => {
-        // setDuration(calculateDuration(waveform.current.getDuration()))
-        setDuration(waveform.current.getDuration().toFixed(1))
+        // setDuration(calculateDuration(waveform.current.getDuration()));
+        setDuration(waveform.current.getDuration().toFixed(1));
         waveform.current.setVolume(1);
       });
       waveform.current.on("audioprocess", () => {
-        // setCurrentTime(calculateCurrentTime(waveform.current.getCurrentTime()))
-        setCurrentTime(waveform.current.getCurrentTime().toFixed(1))
+        // setCurrentTime(calculateCurrentTime(waveform.current.getCurrentTime()));
+        setCurrentTime(waveform.current.getCurrentTime().toFixed(1));
       })
       waveform.current.on("play", () => setIsPlaying(true));
       waveform.current.on("pause", () => setIsPlaying(false));
     }
   };
+
+  /********/
+  /** Problem "Container not found" => Reverse prod & dev */
+  // useEffect(() => {
+  //   return () => {
+  //     if (waveform.current) waveform.current.destroy();
+  //     createWave()
+  //   }
+  // }, [])
+
   createWave()
+  /********/
+
+
+
 
   /********/
   /** WAVE PLAY AND PAUSE */
@@ -88,13 +95,17 @@ const Wave = ({url, bpm}: IWaveProps) => {
      else waveform.current.pause();
   };
 
-  
+
+
+
 
   return (
     <>
       {/********/
       /** WAVE DISPLAY */}
-      <div ref={waveformRef} id="waveform" className="wave bg-zinc-900 rounded-md p-2"></div>
+      <div className="wave__wrapper  bg-zinc-900 rounded-md">
+        <div ref={waveformRef} id="waveform" className="wave"></div>
+      </div>
       
       {/********/
       /** WAVE PLAY AND PAUSE */}

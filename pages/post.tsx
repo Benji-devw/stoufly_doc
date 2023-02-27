@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getTracks, getAllTracks } from './api/tracks';
 import Layout from '@/components/ui/Layout'
 import type { NextPageWithLayout } from './_app'
 import Image from 'next/image';
+import { useSession } from "next-auth/react"
+import { useRouter } from 'next/router';
 
 interface FormValues {
   url: string;
@@ -21,6 +23,9 @@ interface FormValues {
 
 const PostSample: NextPageWithLayout = ({res}: any) => {
 
+  const router = useRouter()
+  const { data: session, status } = useSession()
+  
   const categorySet =       new Set(res.props.res.state.map((cat: any) => cat.category));
   const catList =           Array.from(categorySet).sort();
   const [alert, setAlert] = useState<null | string>(null);
@@ -40,6 +45,12 @@ const PostSample: NextPageWithLayout = ({res}: any) => {
     likes: '',
     datePost: new Date().toISOString()
   })
+
+  useEffect(() => {
+    if (status === "loading") <div>Loading...</div>;
+    if (!session) router.push('/');
+  },[status, session, router])
+
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +114,7 @@ const PostSample: NextPageWithLayout = ({res}: any) => {
   
   return (
     <Layout>
+      {session ?
       <form 
         encType="multipart/form-data"
         onSubmit={handleSubmit} 
@@ -266,7 +278,7 @@ const PostSample: NextPageWithLayout = ({res}: any) => {
               uppercase
               border border-blue
               cursor-pointer
-              hover:bg-blue-600 hover:text-white
+              hover:bg-orange-200 hover:text-white
               ease-linear
               transition-all
               duration-150 "
@@ -294,7 +306,7 @@ const PostSample: NextPageWithLayout = ({res}: any) => {
           </Button> */}
         </div>
       </form>
-
+: ""}
       {alert === 'error' && 
         <div onClick={() => setAlert(null)} className="fixed right-3 top-20 fadeIn bg-red-100 border border-red-400 text-red-700 px-10 py-3 rounded cursor-pointer" role="alert">
           <strong className="font-bold">Fichier Incorrect</strong>
@@ -302,7 +314,7 @@ const PostSample: NextPageWithLayout = ({res}: any) => {
           </span>
         </div>
       }
-
+    
     </Layout>
   )
 }

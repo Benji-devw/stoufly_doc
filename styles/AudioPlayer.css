@@ -1,17 +1,29 @@
-
+.wave__wrapper {
+  padding: .3rem .3rem;
+}
 .wave {
   min-height: 128px;
+  /* margin: .5rem .5rem; */
+  /* margin: .5rem; */
+  /* width: 200px; */
+  /* overflow: visible; */
 }
 .card  {
   flex-direction: column;
-  height: 370px;
+  /* height: 370px; */
   width: 300px;
-  transition: .3s;
+  transition: .5s;
   /* border: var(--main-dark-t) solid 1px; */
 }
 /* .card:hover {
   border-color: var(--main-orange-600);
 } */
+
+
+.card__categories {
+  position: absolute;
+  top: 16.3rem;
+}
 
 .card__controls:hover {
   cursor: pointer;

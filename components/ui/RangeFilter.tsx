@@ -1,3 +1,4 @@
+import { Router, useRouter } from 'next/router';
 import React, { ChangeEvent, FC, useState, useRef } from 'react';
 
 
@@ -8,6 +9,7 @@ interface BpmRangeFilterProps {
 }
 
 export const BpmRangeFilter: FC<BpmRangeFilterProps> = (props) => {
+  const router = useRouter()
   const [minVal, setMinVal] = useState(props.min);
   const [maxVal, setMaxVal] = useState(props.max);
   const minValRef = useRef(props.min);
@@ -48,9 +50,9 @@ export const BpmRangeFilter: FC<BpmRangeFilterProps> = (props) => {
 
         <div className="flex range__slider">
           <div className="range__slider__track dark:bg-zinc-100 bg-orange-700 shadow-md"></div>
-          <div className="range__slider__left-value">bpm min: {minVal}</div>
-          <div className="range__slider__right-value">bpm max: {maxVal}</div>
-          <button className="range__slider__button mx-auto rounded-md mt-4  shadow-md" onClick={handleChange}>Filtrer</button>
+          <div className="range__slider__left-value">bpm min: {!minVal ? router.query.BpmMin : minVal}</div>
+          <div className="range__slider__right-value">bpm max: {!minVal ? router.query.BpmMax : maxVal}</div>
+          <button className="range__slider__button mx-auto rounded-md mt-4 shadow-md" onClick={handleChange}>Filtrer</button>
 
         </div>
       </div>

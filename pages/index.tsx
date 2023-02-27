@@ -20,11 +20,16 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [openAccordion, setOpenAccordion] = useState<boolean>(true);
 
+    /*******/
+  /** Query Filter */
+  const [searchQuery, setSearchQuery] = useState<string | any>();
+  const [tag, setTag] = useState<string | any>();
+
   
   /*******/
   /** Category Filter */
   const tracksCat =     allTracks.props.res;
-  const categorySet =   new Set(tracksCat.state.map((cat: any )=> cat.category));
+  const categorySet =   new Set(tracksCat.state.map((cat: any ) => cat.category));
   const catList =       Array.from(categorySet).sort();
   const [catActive, setCatActive] = useState<any>(catList)
 
@@ -34,26 +39,29 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   const [ skip, setSkip ] = useState<number>(9)
   const [ currentPos, setCurrentPos ] = useState<number>(9)
 
-  
+
 
   useEffect(() => {
     const datas = res.props.res.state
     setTracks(datas);
+    setCounter(datas.length)
+    setSearchQuery(router.query.search)
+    setTag(router.query.tag)
+    if (router.query.search !== searchQuery) setLoading(true)
+    if (router.query.tag !== tag) setLoading(true)
+
     setTimeout(() => {
-      if (res.props.res.state.length > 0) {
+      if (datas.length > 0) {
         setLoading(false);
         setError(false);
-        setCounter(datas.length)
       } else {
         setLoading(false);
         setError(true)
       }
     }, 1000);
+  }, [ query.category, res, allTracks, router.query, catActive, tracks, router, currentPos, loading, searchQuery, tag] )
 
-
-
-  }, [ query.category, res, allTracks, router.query, catActive, tracks, router, currentPos, loading] )
-
+  console.log(typeof(searchQuery));
   
   const handleLoadMore = (e: any) => {
       // e.preventDefault()
@@ -62,7 +70,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
       // router.push({
       //   pathname: '/',
       //   query: { ...router.query, skip: newSkip } },
-      //   undefined, {shallow: true})
+      //   undefined, {scroll: false})
   }  
 
   function getResultRangeBpm(value:any) {
@@ -76,34 +84,38 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
     router.push( { 
         pathname: '/', 
         query: { ...router.query, BpmMin: val[0] } },
-        undefined, {})    
+        undefined, {scroll: false})    
       router.push( { 
         pathname: '/', 
         query: { ...router.query, BpmMax: val[1] } },
-        undefined, {})
+        undefined, {scroll: false})
   }  
 
 
 
   return (
-    <Layout page={"Home - Stouflydoc"}>
+    <Layout page={"Sample Home | Stouflydoc"}>
       <div className="min-h-screen place-items-center">
 
         <div className="container mx-auto filters__Section">
           {/********/
+          /** INTRO */}
+          <h1 className='border-b border-b-1 border-orange-600'>{"Plateforme de partage, de sauvegarde, d'achat, de vente et de téléchargement de sample. Publier et partager vos créations musicales avec la communauté, ou simplement explorer et découvrer de nouveaux contenu."}</h1>
+
+          {/********/
           /** ACCORDION FILTERS */}
-          <div className={`relative accordion grid grid-flow-col w-2/3 mx-auto m-10 pl-12 dark:bg-zinc-900 bg-zinc-100 rounded-md p-2 shadow-md`}>
-            <button className="absolute left-0 mx-5 my-3 cursor-pointer" onClick={() => setOpenAccordion(!openAccordion)}>
+          <div className={`relative accordion grid grid-flow-col w-2/3 mx-auto mt-10 p-2 dark:bg-zinc-900 bg-zinc-100 rounded-md shadow-md`}>
+            {/* <button className="cursor-pointer p-2 dark:bg-zinc-900 bg-zinc-100 rounded-md accordion_button" onClick={() => setOpenAccordion(!openAccordion)}>
               {!openAccordion ?
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov mx-auto">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
                 : 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov mx-auto">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                 </svg>
               }
-            </button>
+            </button> */}
 
             <div className={`${openAccordion ? "accordionOpened" : "accordionClosed"} `}>
               {/********/
@@ -117,12 +129,12 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
                       setLoading(true)
                       setCounter(tracks.length)
                       router.query.category = cat, 
-                      router.push( {  pathname: '/',  query: { ...router.query, category: cat } },  undefined,  {} )
+                      router.push( {  pathname: '/',  query: { ...router.query, category: cat } },  undefined,  {scroll: false} )
                     }}> 
                       <button 
-                        // onClick={() => {setCatActive(cat)}} 
+                        onClick={() => {setCatActive(cat)}} 
                         type="button"
-                        className={`${cat !== catActive ? '' : 'bg-orange-600'} w-full m-2 py-1 px-1 hover:bg-orange-600`}
+                        className={`${cat !== router.query.category ? '' : 'bg-orange-600'} w-full m-2 py-1 px-1 hover:bg-orange-600`}
                       >{cat}</button>
                     </a>
                   </Link>
@@ -137,16 +149,16 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
 
           {/********/
           /** ACTIVE QUERY FILTERS */}
-          <div className='container w_full flex flex-wrap justify-center align-middle gap-6'>
-            <ul className='h-10 my-4 flex'>
+          <div className='container w_full flex flex-wrap justify-center align-middle p-2'>
+            <ul className='flex flex-wrap justify-center align-middle'>
               {Object.keys(router.query).map((item, i) => (
-                <li key={i} className='cursor-pointer text-lg mx-2 px-2 py-1 rounded-xl opacity-50 hover:opacity-80 border border-orange-600 text-center flex align-text-middle'
+                <li key={i} className='cursor-pointer text-md m-1 px-2 py-1 rounded-xl opacity-50 hover:opacity-80 border border-orange-600 text-center flex align-text-middle'
                   onClick={(e) => {
                     e.preventDefault()
                     setSkip(9)
                     setLoading(true)
                     delete router.query[item]
-                    router.replace({ pathname: router.pathname, query: router.query }, undefined,{})
+                    router.replace({ pathname: router.pathname, query: router.query }, undefined, {scroll: false})
                   }}
                 > {item}: {router.query[item]}
                     <svg className="w-7 h-7 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor">
@@ -161,7 +173,7 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
         {/********/
         /** DISPLAY */}
         <div id="track__section" className="flex flex-wrap align-top gap-6 mx-auto" >
-          <div className="w-full tracks__Reasult font-bold">Results match : <code>{counter}</code></div>
+          <div className="w-full tracks__Reasult font-bold">Results match : <code>{loading ? '...' : counter}</code></div>
           {
               loading ? ( [...Array(skip < counter ? skip : counter)].map((n: any, id: number) => <Skeleton key={id} style={{animationDelay: `${id/5}s`}}/>)
             ) : (
