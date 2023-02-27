@@ -18,7 +18,7 @@ export default function User() {
   },[status, session, router])
 
     return (
-      <Layout page={`Stouflydoc - Dashboard ${session!.user!.name!.replace(/\s+/g, '-').trim()}`}>
+      <Layout page={`Stouflydoc - Dashboard ${session!.user!.name}`}>
         {session &&
           <div className={`flex justify-center align-middle h-full flex-wrap`}>
             <div  className={`w-full m-4`}>

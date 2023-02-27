@@ -60,7 +60,7 @@ const Header = () => {
     setShowLogSettings(!showLogSettings)
   }
 
-  
+
   
   return (
     <div className="header__wrapper bg-zinc-900 text-white">
@@ -120,7 +120,7 @@ const Header = () => {
                   <div className="Auth_Settings z-50 w-48 text-center p-2 absolute right-20 top-16 bg-zinc-900 border border-orange-600 dark:bg-zinc-900 rounded-md shadow-md">
                     <ul className="flex flex-col justify-end">
                       <li className="pb-4 p-2 border-b border-orange-900 dark:border-gray-200 text-center">{session.user!.name}</li>
-                      <Link href={`${session.user!.name!.replace(/\s+/g, '-').trim()}`} onClick={() => HandleLogSettings()} className="mx-4 p-2 hover:text-orange-600">Dashboard</Link>
+                      <Link href={`${session.user!.name}`} onClick={() => HandleLogSettings()} className="mx-4 p-2 hover:text-orange-600">Dashboard</Link>
                       <Link href={`${"/post"}`} className="mx-4 p-2 hover:text-orange-600">Post Sample</Link>
                       {/* <li className="p-2">Post Sample</li> */}
                       {/* <Link href={nav.path} className="mx-4">{nav.label}</Link> */}
