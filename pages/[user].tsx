@@ -11,14 +11,18 @@ export default function User() {
   const router = useRouter()
   const { data: session, status } = useSession()
   // const [datas, setDatas] = useState([])
+  const { user } = router.query;
+
 
   useEffect(() => {
-    if (status === "loading") <div>Loading...</div>;
-    if (!session) router.push('/');
-  },[status, session, router])
+    return () => {
+      if (status === "loading") <div>Loading...</div>;
+      if (!session) router.push('/');
+    }
+  },[user, status, session, router])
 
     return (
-      <Layout page={`Stouflydoc - Dashboard ${session!.user!.name}`}>
+      <Layout page={`Stouflydoc - Dashboard`}>
         {session &&
           <div className={`flex justify-center align-middle h-full flex-wrap`}>
             <div  className={`w-full m-4`}>

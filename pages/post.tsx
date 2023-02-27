@@ -47,8 +47,10 @@ const PostSample: NextPageWithLayout = ({res}: any) => {
   })
 
   useEffect(() => {
-    if (status === "loading") <div>Loading...</div>;
-    if (!session) router.push('/');
+    return () => {
+      if (status === "loading") <div>Loading...</div>;
+      if (!session) router.push('/');
+    }
   },[status, session, router])
 
 
