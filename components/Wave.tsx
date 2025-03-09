@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import type WaveSurfer from 'wavesurfer.js';
 import { 
   Box, 
@@ -46,7 +46,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
 
   /********/
   /** WAVE CREATE */
-  const createWave = async () => {
+  const createWave = useCallback(async () => {
     if (waveformRef.current && !waveform.current) {
       try {
         // Vérifie si l'URL est valide
@@ -99,7 +99,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
         console.error("Erreur lors de la création de WaveSurfer:", error);
       }
     }
-  };
+  }, [url, theme.palette.primary.light, theme.palette.primary.main]);
 
   useEffect(() => {
     // Réinitialiser l'état si l'URL change
@@ -113,19 +113,16 @@ const Wave = ({url, bpm}: IWaveProps) => {
       waveform.current = null;
     }
     
-    // Créer une nouvelle instance après un court délai
-    const timer = setTimeout(() => {
-      createWave();
-    }, 100);
+    // Créer une nouvelle instance
+    createWave();
     
     return () => {
-      clearTimeout(timer);
       if (waveform.current) {
         waveform.current.destroy();
         waveform.current = null;
       }
     };
-  }, [url, retryCount]);
+  }, [createWave]);
 
   // Fonction pour réessayer
   const handleRetry = () => {
@@ -170,7 +167,8 @@ const Wave = ({url, bpm}: IWaveProps) => {
               height: '100%' 
             }}>
               <Typography color="error">
-                Impossible de charger l'audio
+                {/* eslint-disable-next-line react/no-unescaped-entities */}
+                Impossible de charger l&apos;audio
               </Typography>
             </Box>
           </WaveContainer>
