@@ -1,4 +1,4 @@
-import axios from 'axios';
+const API_URL = process.env.ENV === 'dev' ? process.env.NEXT_LOCAL_API_URL : process.env.NEXT_PUBLIC_API_URL;
 
 /********/
 /** GET TRACKS WITH QUERY */
@@ -13,7 +13,7 @@ export async function getTracks(query: any) {
 
   try {
     // const res = await fetch(`http://localhost:8080/tracks/${query ? '?' : ''}${queries}`)
-    const response = await fetch(`https://stoufly-doc-api.vercel.app/tracks/${Object.keys(query).length > 0 ? '?' : ''}${queries}`);
+    const response = await fetch(`${API_URL}/tracks/${Object.keys(query).length > 0 ? '?' : ''}${queries}`);
     
     if (!response.ok) {
       throw new Error(`Erreur HTTP: ${response.status}`);
@@ -41,7 +41,7 @@ export async function getTracks(query: any) {
 export async function getAllTracks() {
   try {
     // const res = await fetch(`http://localhost:8080/tracks/all`)
-    const response = await fetch(`https://stoufly-doc-api.vercel.app/tracks/all`);
+    const response = await fetch(`${API_URL}/tracks/all`);
     
     if (!response.ok) {
       throw new Error(`Erreur HTTP: ${response.status}`);

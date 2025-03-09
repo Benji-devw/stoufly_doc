@@ -16,12 +16,9 @@ const Layout = ({ children, page, toggleColorMode, currentTheme }: LayoutProps) 
     <>
       <Head>
         <title>{page}</title>
-        <meta name="description" content="Samples - Boucles - Loops - Bibliothèque de samples - Banque de sons - partage - stock - vente" />
-        <link rel="icon" href="/StouflyDoc_Logo.svg" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700&display=swap"
-        />
+        <meta name="description" content="Stouflydoc - Bibliothèque de samples" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header toggleColorMode={toggleColorMode} currentTheme={currentTheme} />

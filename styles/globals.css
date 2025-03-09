@@ -24,15 +24,16 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     transition: .3s ease-in;
-  }
-  .dark {
-    color: var(--main-light);
-    background-color: var(--main-dark);
-  }
-  .light {
-    color: var(--main-dark);
-    background-color: var(--main-light);
-  }
+}
+.dark {
+  color: var(--main-light);
+  background-color: var(--main-dark);
+}
+.light {
+  color: var(--main-dark);
+  background-color: var(--main-light);
+}
+
 input {
   transition: .3s ease-in;
 }
@@ -60,21 +61,6 @@ h1 {
   /* border-bottom: 1px solid red; */
 }
 
-/* .accordion_hov:hover {
-  transform: rotate(180deg);
-} */
-/* .accordion {
-  overflow: hidden;
-}
-.accordionOpened {
-  height: auto;
-}
-.accordionClosed {
-  height: 50px;
-} */
-
-
-
 #track__section {
   padding: 0 3rem 0 3rem;
   max-width: 2560px;
@@ -91,23 +77,6 @@ h1 {
   bottom: .2rem;
 }
 
-
 .track__Post__Form input:focus {
   border: 1px solid var(--main-orange-600);
-}
-
-
-
-
-
-.skeleton  {
-  flex-direction: column;
-  height: 370px;
-  width: 300px;
-  transition: .3s;
-  /* animation: load 3s steps(2, end) infinite; */
-}
-@keyframes load {
-  0% {transform: translateY(10px)}
-  100% {transform: translateY(0px)}
 }

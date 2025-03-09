@@ -6,6 +6,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { PaletteMode } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { useState, useEffect } from 'react'
+import { SessionProvider } from 'next-auth/react'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -112,15 +113,17 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {getLayout(
-        <Component 
-          {...pageProps} 
-          toggleColorMode={toggleColorMode} 
-          currentTheme={mode} 
-        />
-      )}
-    </ThemeProvider>
+    <SessionProvider session={pageProps.session}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {getLayout(
+          <Component 
+            {...pageProps} 
+            toggleColorMode={toggleColorMode} 
+            currentTheme={mode} 
+          />
+        )}
+      </ThemeProvider>
+    </SessionProvider>
   )
 }

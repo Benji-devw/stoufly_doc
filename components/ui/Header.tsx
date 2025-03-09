@@ -27,6 +27,8 @@ import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
+import LoginIcon from '@mui/icons-material/Login';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 // Composant de recherche stylisé
 const Search = styled('div')(({ theme }) => ({
@@ -78,6 +80,7 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
   const [query, setQuery] = useState<string>('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
+  const { data: session } = useSession();
   
   // État pour le menu utilisateur
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -99,13 +102,23 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
     }
   };
 
+  const handleSignOut = () => {
+    signOut();
+    handleCloseUserMenu();
+  };
+
+  const handleSignIn = () => {
+    signIn();
+    handleCloseUserMenu();
+  };
+
   return (
     <AppBar position="static" color="primary">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Logo et titre */}
           <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <Image src="/StouflyDoc_Logo.svg" alt="logo" width={40} height={40} />
+            <Image src="/StouflyDoc_Logo.svg" alt="logo" width={40} height={40} priority />
             <Typography
               variant="h6"
               noWrap
@@ -146,7 +159,7 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
               Accueil
             </Button>
             
-            <Button
+            {/* <Button
               color="inherit"
               component={Link}
               href="/post"
@@ -154,7 +167,7 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
               sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
             >
               Publier
-            </Button>
+            </Button> */}
 
             {/* Bouton de thème */}
             <Tooltip title={currentTheme === 'dark' ? 'Mode clair' : 'Mode sombre'}>
@@ -164,14 +177,20 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
             </Tooltip>
 
             {/* Menu utilisateur */}
-            <Box sx={{ ml: 1 }}>
-              <Tooltip title="Paramètres utilisateur">
+                <Box sx={{ ml: 1 }}>
+                  <Tooltip title="Paramètres utilisateur">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="User">
-                    <PersonIcon />
+                    {session?.user?.image ? ( 
+                      <Image src={session.user.image} alt="User" width={100} height={100} />
+                    ) : (
+                      <PersonIcon />
+                    )}
                   </Avatar>
                 </IconButton>
               </Tooltip>
+            {
+              session ? (
               <Menu
                 sx={{ mt: '45px' }}
                 id="menu-appbar"
@@ -187,6 +206,7 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
                 }}
                 open={Boolean(anchorEl)}
                 onClose={handleCloseUserMenu}
+                disableScrollLock={true}
               >
                 <MenuItem component={Link} href="/user" onClick={handleCloseUserMenu}>
                   <PersonIcon sx={{ mr: 1 }} /> Profil
@@ -197,10 +217,33 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
                 <MenuItem component={Link} href="/settings" onClick={handleCloseUserMenu}>
                   <SettingsIcon sx={{ mr: 1 }} /> Paramètres
                 </MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={handleSignOut}>
                   <LogoutIcon sx={{ mr: 1 }} /> Déconnexion
                 </MenuItem>
               </Menu>
+              ) : (
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleCloseUserMenu}
+                disableScrollLock={true}
+              >
+                <MenuItem onClick={handleSignIn}>
+                  <LoginIcon sx={{ mr: 1 }} /> Connexion
+                </MenuItem>
+              </Menu>
+            )}
             </Box>
           </Box>
         </Toolbar>
