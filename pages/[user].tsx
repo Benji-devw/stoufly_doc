@@ -94,7 +94,7 @@ export default function User() {
                       Mes samples publiés
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
-                      Vous n'avez pas encore publié de samples.
+                      Vous n&apos;avez pas encore publié de samples.
                     </Typography>
                   </Box>
                 )}
@@ -105,7 +105,7 @@ export default function User() {
                       Samples favoris
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
-                      Vous n'avez pas encore de samples favoris.
+                      Vous n&apos;avez pas encore de samples favoris.
                     </Typography>
                   </Box>
                 )}

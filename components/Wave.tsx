@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link';
 import type WaveSurfer from 'wavesurfer.js';
 import { 
   Box, 
@@ -41,28 +40,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
   const [currentTime, setCurrentTime] = useState<number | string>('0:00');
   const [isReady, setIsReady] = useState(false);
 
-  
   /********/
-  /** CALCULATE AND FORMATO TIME TRACKS */
-    // const calculateCurrentTime = (value: any) => {
-    //   let seconds: number | string = Math.floor(value % 60);
-    //   let minutes: number | string = Math.floor((value / 60) % 60);
-    //   if (seconds < 10) seconds = "0" + seconds;
-    //   return minutes + ":" + seconds;
-    // }
-    // const calculateDuration = (value: any) => {
-    //   let seconds: number | string = Math.floor(value % 60);
-    //   let minutes: number | string = Math.floor((value / 60) % 60);
-    //   const milliseconds: number | string = Math.floor(value * 1000);
-    //   if (seconds < 10) {
-    //       if (seconds <= 0) seconds = `0${Math.floor(milliseconds / 10)}`;
-    //       else seconds = "0" + seconds;
-    //   }
-    //   return seconds > 0 ? minutes + ":" + seconds : seconds
-    // }
-
-
-      /********/
   /** WAVE CREATE */
   const createWave = async () => {
     if (waveformRef.current && !waveform.current) {
