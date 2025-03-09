@@ -105,7 +105,7 @@ h1 {
   height: 370px;
   width: 300px;
   transition: .3s;
-  animation: load 3s steps(2, end) infinite;
+  /* animation: load 3s steps(2, end) infinite; */
 }
 @keyframes load {
   0% {transform: translateY(10px)}

@@ -3,23 +3,36 @@ import axios from 'axios';
 /********/
 /** GET TRACKS WITH QUERY */
 export async function getTracks(query: any) {
+  // Si query est undefined, initialiser comme un objet vide
+  query = query || {};
 
   let esc = encodeURIComponent;
   let queries = Object.keys(query)
     .map(k => esc(k) + '=' + esc(query[k]))
     .join('&');
 
-  
   try {
     // const res = await fetch(`http://localhost:8080/tracks/${query ? '?' : ''}${queries}`)
-    const res = await fetch(`https://stoufly-doc-api.vercel.app/tracks/${query ? '?' : ''}${queries}`)
+    const response = await fetch(`https://stoufly-doc-api.vercel.app/tracks/${Object.keys(query).length > 0 ? '?' : ''}${queries}`);
     
-      .then(r => r.json())
-      return {
-        props: {res}
-      }
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+    
+    const res = await response.json();
+    return {
+      props: { res }
+    };
   } catch (err) {
-    console.error(err);
+    console.error("Erreur lors de la récupération des pistes:", err);
+    // Retourner un objet avec un état vide plutôt que undefined
+    return {
+      props: { 
+        res: { 
+          state: [] 
+        } 
+      }
+    };
   }
 }
 
@@ -28,13 +41,26 @@ export async function getTracks(query: any) {
 export async function getAllTracks() {
   try {
     // const res = await fetch(`http://localhost:8080/tracks/all`)
-    const res = await fetch(`https://stoufly-doc-api.vercel.app/tracks/all`)
-    .then(r => r.json())
-    return {
-      props: {res}
+    const response = await fetch(`https://stoufly-doc-api.vercel.app/tracks/all`);
+    
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
     }
+    
+    const res = await response.json();
+    return {
+      props: { res }
+    };
   } catch (err) {
-    console.error(err);
+    console.error("Erreur lors de la récupération de toutes les pistes:", err);
+    // Retourner un objet avec un état vide plutôt que undefined
+    return {
+      props: { 
+        res: { 
+          state: [] 
+        } 
+      }
+    };
   }
 }
 

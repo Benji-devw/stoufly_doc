@@ -28,10 +28,10 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
   
   /*******/
   /** Category Filter */
-  const tracksCat =     allTracks.props.res;
-  const categorySet =   new Set(tracksCat.state.map((cat: any ) => cat.category));
-  const catList =       Array.from(categorySet).sort();
-  const [catActive, setCatActive] = useState<any>(catList)
+  const tracksCat = allTracks?.props?.res || { state: [] };
+  const categorySet = new Set((tracksCat.state || []).map((cat: any) => cat?.category || 'Non catégorisé').filter(Boolean));
+  const catList = Array.from(categorySet).sort();
+  const [catActive, setCatActive] = useState<any>(catList);
 
   /*******/
   /** Limit & counter */
@@ -42,26 +42,32 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
 
 
   useEffect(() => {
-    const datas = res.props.res.state
+    // Définir l'état de chargement au début
+    setLoading(true);
+    
+    // Vérifier que res et ses propriétés sont définis
+    const datas = res?.props?.res?.state || [];
+    
+    // Mettre à jour les états avec les nouvelles données
     setTracks(datas);
-    setCounter(datas.length)
-    setSearchQuery(router.query.search)
-    setTag(router.query.tag)
-    if (router.query.search !== searchQuery) setLoading(true)
-    if (router.query.tag !== tag) setLoading(true)
-
-    setTimeout(() => {
+    setCounter(datas.length);
+    setSearchQuery(router.query.search || '');
+    setTag(router.query.tag || '');
+    
+    // Utiliser un délai plus court pour une meilleure expérience utilisateur
+    const timer = setTimeout(() => {
       if (datas.length > 0) {
         setLoading(false);
         setError(false);
       } else {
         setLoading(false);
-        setError(true)
+        setError(true);
       }
-    }, 1000);
-  }, [ query.category, res, allTracks, router.query, catActive, tracks, router, currentPos, loading, searchQuery, tag] )
-
-  console.log(typeof(searchQuery));
+    }, 600); // Augmenter légèrement le délai pour une meilleure transition
+    
+    // Nettoyer le timer si le composant est démonté
+    return () => clearTimeout(timer);
+  }, [res, router.query]); // Réduire les dépendances pour éviter les rendus inutiles
   
   const handleLoadMore = (e: any) => {
       // e.preventDefault()
@@ -170,26 +176,71 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
           </div>
         </div>
 
-        {/********/
-        /** DISPLAY */}
-        <div id="track__section" className="flex flex-wrap align-top gap-6 mx-auto" >
-          <div className="w-full tracks__Reasult font-bold">Results match : <code>{loading ? '...' : counter}</code></div>
-          {
-              loading ? ( [...Array(skip < counter ? skip : counter)].map((n: any, id: number) => <Skeleton key={id} style={{animationDelay: `${id/5}s`}}/>)
+        {/********/}
+        {/** DISPLAY */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">
+              Samples disponibles
+              <span className="ml-2 px-3 py-1 text-sm bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 rounded-full">
+                {loading ? '...' : counter}
+              </span>
+            </h2>
+            
+            {/* Boutons de tri (à implémenter plus tard) */}
+            <div className="hidden md:flex space-x-2">
+              <button className="px-3 py-1 text-sm bg-zinc-200 dark:bg-zinc-800 rounded-md hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors">
+                Les plus récents
+              </button>
+              <button className="px-3 py-1 text-sm bg-zinc-200 dark:bg-zinc-800 rounded-md hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors">
+                Les plus populaires
+              </button>
+            </div>
+          </div>
+          
+          {/* Conteneur principal avec hauteur minimale fixe */}
+          <div className="min-h-[70vh]">
+            {loading ? (
+              /* État de chargement */
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
+                {[...Array(skip < counter ? skip : 9)].map((n: any, id: number) => (
+                  <Skeleton key={`skeleton-${id}`} style={{animationDelay: `${id/10}s`}} />
+                ))}
+              </div>
+            ) : error ? (
+              /* Message d'erreur */
+              <div className="flex flex-col items-center justify-center py-12 animate-fadeIn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-zinc-400 mb-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+                <h4 className="text-xl font-bold text-zinc-700 dark:text-zinc-300">Aucun résultat trouvé</h4>
+                <p className="text-zinc-500 mt-2">Essayez de modifier vos critères de recherche</p>
+              </div>
             ) : (
-              error ? ( <h4 className='text-xl font-bold relative top-10'>Aucun résultat...</h4>
-              ) : ( tracks.slice(0, skip).map((track: any, id: number) => <AudioPlayer key={id} track={track} />  ) )
-            )
-          }
+              /* Tracks réelles */
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
+                {tracks.slice(0, skip).map((track: any, id: number) => (
+                  <AudioPlayer key={`track-${id}`} track={track} />
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {skip < counter && (
+            <div className="flex justify-center mt-10">
+              <button 
+                onClick={(e) => handleLoadMore(e)} 
+                type="button" 
+                className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
+              >
+                <span>Charger plus</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 ml-2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="flex full-w justify-center">
-        {skip < counter && 
-            <button onClick={(e) => handleLoadMore(e)} type="button" className={`m-5 py-2 px-5 bg-orange-800 hover:bg-orange-700 rounded-sm mx-auto text-center`}>
-              Load more
-            </button>
-        }
       </div>
     </Layout>
   )
@@ -201,8 +252,16 @@ export default Home
 
 
 
-export async function getServerSideProps({query}: any) {
-  const res = await getTracks(query)
-  const allTracks = await getAllTracks()
-  return { props: {res, allTracks, query} }
+export async function getServerSideProps({ query }: any) {
+  const res = await getTracks(query);
+  const allTracks = await getAllTracks();
+
+  // Vérifier que res et allTracks sont définis
+  return { 
+    props: { 
+      res: res || { props: { res: { state: [] } } }, 
+      allTracks: allTracks || { props: { res: { state: [] } } }, 
+      query 
+    } 
+  };
 }
