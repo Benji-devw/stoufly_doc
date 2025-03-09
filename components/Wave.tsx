@@ -185,9 +185,17 @@ const Wave = ({url, bpm}: IWaveProps) => {
           <Grid item xs={4}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <AccessTimeIcon color="action" fontSize="small" sx={{ mr: 0.5 }} />
-              <Typography variant="body2" color="text.secondary">
-                {currentTime} / {duration}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ mr: 0.5, width: '30px' }} variant="body2" color="text.secondary">
+                  {currentTime}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  /
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {duration}
+                </Typography>
+              </Box>
             </Box>
           </Grid>
           
