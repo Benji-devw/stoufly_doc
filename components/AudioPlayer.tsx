@@ -80,7 +80,7 @@ const AudioPlayer = ({ track }: AudioPlayerProps) => {
         display: 'flex', 
         flexDirection: 'column',
         height: '100%',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.1s ease',
         '&:hover': {
           borderColor: theme.palette.primary.main,
           boxShadow: theme.shadows[4]

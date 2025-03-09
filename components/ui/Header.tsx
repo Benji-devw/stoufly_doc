@@ -20,8 +20,8 @@ import {
   styled
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import NightlightIcon from '@mui/icons-material/Nightlight';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -30,6 +30,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LoginIcon from '@mui/icons-material/Login';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import AuthModal from '../auth/AuthModal';
+import { useThemeContext } from '@/contexts/ThemeContext';
 
 // Composant de recherche stylisé
 const Search = styled('div')(({ theme }) => ({
@@ -72,17 +73,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 interface HeaderProps {
-  toggleColorMode?: () => void;
-  currentTheme?: 'light' | 'dark';
+  // Autres props si nécessaire
 }
 
-const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
+const Header = () => {
   const router = useRouter();
   const [query, setQuery] = useState<string>('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const { data: session } = useSession();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { mode, toggleColorMode } = useThemeContext();
   
   // État pour le menu utilisateur
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -122,9 +123,17 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
     setAuthModalOpen(false);
   };
 
+  // console.log('Header props:', { toggleColorMode, mode });
+
   return (
     <>
-      <AppBar position="static" color="primary">
+      <AppBar 
+        position="static" 
+        color="primary"
+        sx={{ 
+          bgcolor: 'primary.main', // Force la couleur orange dans tous les modes
+        }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             {/* Logo et titre */}
@@ -169,21 +178,11 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
               >
                 Accueil
               </Button>
-              
-              {/* <Button
-                color="inherit"
-                component={Link}
-                href="/post"
-                startIcon={<AddIcon />}
-                sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
-              >
-                Publier
-              </Button> */}
 
               {/* Bouton de thème */}
-              <Tooltip title={currentTheme === 'dark' ? 'Mode clair' : 'Mode sombre'}>
+              <Tooltip title={mode === 'dark' ? 'Mode clair' : 'Mode sombre'}>
                 <IconButton onClick={toggleColorMode} color="inherit">
-                  {currentTheme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                  {mode === 'dark' ? <WbSunnyIcon /> : <NightlightIcon />}
                 </IconButton>
               </Tooltip>
 
@@ -193,7 +192,7 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar alt="User">
                       {session?.user?.image ? ( 
-                        <Image src={session.user.image} alt="User" width={100} height={100} />
+                        <Image src={session.user.image} alt="User" width={100} height={100} priority />
                       ) : (
                         <PersonIcon />
                       )}

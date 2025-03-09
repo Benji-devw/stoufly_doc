@@ -2,11 +2,11 @@ import '../styles/globals.css'
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
-import { PaletteMode } from '@mui/material'
+import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import { useState, useEffect } from 'react'
 import { SessionProvider } from 'next-auth/react'
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import { useThemeContext } from '@/contexts/ThemeContext'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -16,8 +16,8 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-// Création d'un thème Material UI personnalisé
-const getDesignTokens = (mode: PaletteMode) => ({
+// Fonction pour créer le thème MUI basé sur le mode
+const getDesignTokens = (mode: 'light' | 'dark') => ({
   palette: {
     mode,
     primary: {
@@ -27,18 +27,14 @@ const getDesignTokens = (mode: PaletteMode) => ({
       contrastText: '#fff',
     },
     secondary: {
-      main: '#0f172a',
-      light: '#1e293b',
-      dark: '#020617',
+      main: '#0ceaba',
+      light: '#1693f9',
+      dark: '#9a3412',
       contrastText: '#fff',
     },
-    background: {
-      default: mode === 'light' ? '#f8fafc' : '#0f172a',
-      paper: mode === 'light' ? '#ffffff' : '#1e293b',
-    },
-    text: {
-      primary: mode === 'light' ? '#0f172a' : '#f8fafc',
-      secondary: mode === 'light' ? '#475569' : '#94a3b8',
+    background: { 
+      default: mode === 'light' ? '#f8fafc' : '#0d1117',
+      paper: mode === 'light' ? '#F5F5F5' : '#0d1117',
     },
   },
   typography: {
@@ -79,51 +75,40 @@ const getDesignTokens = (mode: PaletteMode) => ({
         },
       },
     },
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: '#ea580c',
+        },
+      },
+    },
   },
 })
 
+// Composant wrapper pour appliquer le thème MUI
+const MuiThemeWrapper = ({ children }: { children: ReactNode }) => {
+  const { mode } = useThemeContext();
+  const theme = createTheme(getDesignTokens(mode));
+  
+  return (
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      {children}
+    </MuiThemeProvider>
+  );
+};
+
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  // Détection du mode sombre
-  const [mode, setMode] = useState<PaletteMode>('light')
-  
-  useEffect(() => {
-    // Vérifier si le mode sombre est activé dans le localStorage ou les préférences système
-    const savedMode = localStorage.getItem('theme')
-    if (savedMode) {
-      setMode(savedMode as PaletteMode)
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setMode('dark')
-    }
-    
-    // Ajouter la classe au body pour Tailwind (pour la transition)
-    document.body.classList.toggle('dark', mode === 'dark')
-  }, [mode])
-  
-  // Création du thème
-  const theme = createTheme(getDesignTokens(mode))
-  
-  // Fonction pour changer le thème
-  const toggleColorMode = () => {
-    const newMode = mode === 'light' ? 'dark' : 'light'
-    setMode(newMode)
-    localStorage.setItem('theme', newMode)
-  }
-  
   // Utiliser le layout personnalisé du composant s'il existe
-  const getLayout = Component.getLayout ?? ((page) => page)
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <SessionProvider session={pageProps.session}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        {getLayout(
-          <Component 
-            {...pageProps} 
-            toggleColorMode={toggleColorMode} 
-            currentTheme={mode} 
-          />
-        )}
+      <ThemeProvider>
+        <MuiThemeWrapper>
+          {getLayout(<Component {...pageProps} />)}
+        </MuiThemeWrapper>
       </ThemeProvider>
     </SessionProvider>
-  )
+  );
 }

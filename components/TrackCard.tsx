@@ -56,13 +56,13 @@ const TrackCard = ({ track }: TrackCardProps) => {
     <Card 
       sx={{ 
         height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column',
-        transition: 'transform 0.2s',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 6
-        }
+        // display: 'flex', 
+        // flexDirection: 'column',
+        // transition: 'transform 0.2s',
+        // '&:hover': {
+        //   transform: 'translateY(-4px)',
+        //   boxShadow: 6
+        // }
       }}
     >
       <CardActionArea onClick={handleCardClick}>
