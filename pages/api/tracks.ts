@@ -12,7 +12,6 @@ export async function getTracks(query: any) {
     .join('&');
 
   try {
-    // const res = await fetch(`http://localhost:8080/tracks/${query ? '?' : ''}${queries}`)
     const response = await fetch(`${API_URL}/tracks/${Object.keys(query).length > 0 ? '?' : ''}${queries}`);
     
     if (!response.ok) {
@@ -40,7 +39,6 @@ export async function getTracks(query: any) {
 /** GET ALL TRACKS FOR MAP CAT TAG ...  */
 export async function getAllTracks() {
   try {
-    // const res = await fetch(`http://localhost:8080/tracks/all`)
     const response = await fetch(`${API_URL}/tracks/all`);
     
     if (!response.ok) {
@@ -53,7 +51,6 @@ export async function getAllTracks() {
     };
   } catch (err) {
     console.error("Erreur lors de la récupération de toutes les pistes:", err);
-    // Retourner un objet avec un état vide plutôt que undefined
     return {
       props: { 
         res: { 

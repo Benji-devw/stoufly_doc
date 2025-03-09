@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -29,6 +29,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import LoginIcon from '@mui/icons-material/Login';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import AuthModal from '../auth/AuthModal';
 
 // Composant de recherche stylisé
 const Search = styled('div')(({ theme }) => ({
@@ -81,6 +82,7 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const { data: session } = useSession();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   
   // État pour le menu utilisateur
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -112,143 +114,159 @@ const Header = ({ toggleColorMode, currentTheme }: HeaderProps) => {
     handleCloseUserMenu();
   };
 
+  const handleOpenAuthModal = () => {
+    setAuthModalOpen(true);
+  };
+  
+  const handleCloseAuthModal = () => {
+    setAuthModalOpen(false);
+  };
+
   return (
-    <AppBar position="static" color="primary">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Logo et titre */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-            <Image src="/StouflyDoc_Logo.svg" alt="logo" width={40} height={40} priority />
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ ml: 1, display: { xs: 'none', sm: 'block' }, fontWeight: 'bold' }}
-            >
-              StouflyDoc
-            </Typography>
-          </Box>
+    <>
+      <AppBar position="static" color="primary">
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            {/* Logo et titre */}
+            <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+              <Image src="/StouflyDoc_Logo.svg" alt="logo" width={40} height={40} priority />
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ ml: 1, display: { xs: 'none', sm: 'block' }, fontWeight: 'bold' }}
+              >
+                StouflyDoc
+              </Typography>
+            </Box>
 
-          {/* Barre de recherche */}
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-            <form onSubmit={handleSearch} style={{ width: '100%', maxWidth: '500px' }}>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Loop, jazz, drop, artiste..."
-                  inputProps={{ 'aria-label': 'search' }}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  fullWidth
-                />
-              </Search>
-            </form>
-          </Box>
+            {/* Barre de recherche */}
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+              <form onSubmit={handleSearch} style={{ width: '100%', maxWidth: '500px' }}>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Loop, jazz, drop, artiste..."
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    fullWidth
+                  />
+                </Search>
+              </form>
+            </Box>
 
-          {/* Navigation et actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Button
-              color="inherit"
-              component={Link}
-              href="/"
-              startIcon={<HomeIcon />}
-              sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
-            >
-              Accueil
-            </Button>
-            
-            {/* <Button
-              color="inherit"
-              component={Link}
-              href="/post"
-              startIcon={<AddIcon />}
-              sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
-            >
-              Publier
-            </Button> */}
+            {/* Navigation et actions */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Button
+                color="inherit"
+                component={Link}
+                href="/"
+                startIcon={<HomeIcon />}
+                sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
+              >
+                Accueil
+              </Button>
+              
+              {/* <Button
+                color="inherit"
+                component={Link}
+                href="/post"
+                startIcon={<AddIcon />}
+                sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
+              >
+                Publier
+              </Button> */}
 
-            {/* Bouton de thème */}
-            <Tooltip title={currentTheme === 'dark' ? 'Mode clair' : 'Mode sombre'}>
-              <IconButton onClick={toggleColorMode} color="inherit">
-                {currentTheme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
-            </Tooltip>
-
-            {/* Menu utilisateur */}
-                <Box sx={{ ml: 1 }}>
-                  <Tooltip title="Paramètres utilisateur">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User">
-                    {session?.user?.image ? ( 
-                      <Image src={session.user.image} alt="User" width={100} height={100} />
-                    ) : (
-                      <PersonIcon />
-                    )}
-                  </Avatar>
+              {/* Bouton de thème */}
+              <Tooltip title={currentTheme === 'dark' ? 'Mode clair' : 'Mode sombre'}>
+                <IconButton onClick={toggleColorMode} color="inherit">
+                  {currentTheme === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                 </IconButton>
               </Tooltip>
-            {
-              session ? (
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleCloseUserMenu}
-                disableScrollLock={true}
-              >
-                <MenuItem component={Link} href="/user" onClick={handleCloseUserMenu}>
-                  <PersonIcon sx={{ mr: 1 }} /> Profil
-                </MenuItem>
-                <MenuItem component={Link} href="/post" onClick={handleCloseUserMenu}>
-                  <AddIcon sx={{ mr: 1 }} /> Publier
-                </MenuItem>
-                <MenuItem component={Link} href="/settings" onClick={handleCloseUserMenu}>
-                  <SettingsIcon sx={{ mr: 1 }} /> Paramètres
-                </MenuItem>
-                <MenuItem onClick={handleSignOut}>
-                  <LogoutIcon sx={{ mr: 1 }} /> Déconnexion
-                </MenuItem>
-              </Menu>
-              ) : (
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleCloseUserMenu}
-                disableScrollLock={true}
-              >
-                <MenuItem onClick={handleSignIn}>
-                  <LoginIcon sx={{ mr: 1 }} /> Connexion
-                </MenuItem>
-              </Menu>
-            )}
+
+              {/* Menu utilisateur */}
+              <Box sx={{ ml: 1 }}>
+                <Tooltip title="Paramètres utilisateur">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="User">
+                      {session?.user?.image ? ( 
+                        <Image src={session.user.image} alt="User" width={100} height={100} />
+                      ) : (
+                        <PersonIcon />
+                      )}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                {
+                  session ? (
+                  <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleCloseUserMenu}
+                    disableScrollLock={true}
+                  >
+                    <MenuItem component={Link} href="/user" onClick={handleCloseUserMenu}>
+                      <PersonIcon sx={{ mr: 1 }} /> Profil
+                    </MenuItem>
+                    <MenuItem component={Link} href="/post" onClick={handleCloseUserMenu}>
+                      <AddIcon sx={{ mr: 1 }} /> Publier
+                    </MenuItem>
+                    <MenuItem component={Link} href="/settings" onClick={handleCloseUserMenu}>
+                      <SettingsIcon sx={{ mr: 1 }} /> Paramètres
+                    </MenuItem>
+                    <MenuItem onClick={handleSignOut}>
+                      <LogoutIcon sx={{ mr: 1 }} /> Déconnexion
+                    </MenuItem>
+                  </Menu>
+                  ) : (
+                  <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleCloseUserMenu}
+                    disableScrollLock={true}
+                  >
+                    <MenuItem onClick={handleOpenAuthModal}>
+                      <LoginIcon sx={{ mr: 1 }} /> Connexion
+                    </MenuItem>
+                  </Menu>
+                )}
+              </Box>
             </Box>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      
+      {/* Modal d'authentification */}
+      <AuthModal 
+        open={authModalOpen} 
+        onClose={handleCloseAuthModal} 
+      />
+    </>
   );
 };
 
