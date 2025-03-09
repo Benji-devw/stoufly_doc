@@ -1,45 +1,50 @@
-import { useState, useEffect, useRef } from 'react'
-import Layout from '@/components/ui/Layout'
-import type { NextPageWithLayout } from './_app'
-import Skeleton from '@/components/ui/skeletonCard'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import type { NextPageWithLayout } from './_app';
+import Layout from '@/components/ui/Layout';
+import Skeleton from '@/components/ui/skeletonCard';
 import { getTracks, getAllTracks } from './api/tracks';
-import AudioPlayer from '@/components/AudioPlayer'
-import Link from 'next/link';
-import { useRouter } from 'next/router'
-import {BpmRangeFilter} from '@/components/ui/RangeFilter';
-
-// import IntersectingObserver from '../components/ui/IntersectingObserver';
-
-
+import AudioPlayer from '@/components/AudioPlayer';
+import {
+  Container,
+  Typography,
+  Box,
+  Grid,
+  Button,
+  Chip,
+  Paper,
+  IconButton,
+  Stack,
+  useTheme
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { BpmRangeFilter } from '@/components/ui/RangeFilter';
 
 const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
-  
-  const router = useRouter()
-  const [error, setError] =     useState<boolean>(false);
-  const [tracks, setTracks] =   useState<any>([]);
+  const router = useRouter();
+  const theme = useTheme();
+  const [error, setError] = useState<boolean>(false);
+  const [tracks, setTracks] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [openAccordion, setOpenAccordion] = useState<boolean>(true);
 
-    /*******/
-  /** Query Filter */
+  // Query Filter
   const [searchQuery, setSearchQuery] = useState<string | any>();
   const [tag, setTag] = useState<string | any>();
 
-  
-  /*******/
-  /** Category Filter */
+  // Category Filter
   const tracksCat = allTracks?.props?.res || { state: [] };
   const categorySet = new Set((tracksCat.state || []).map((cat: any) => cat?.category || 'Non catégorisé').filter(Boolean));
-  const catList = Array.from(categorySet).sort();
+  const catList = Array.from(categorySet).sort() as string[];
   const [catActive, setCatActive] = useState<any>(catList);
 
-  /*******/
-  /** Limit & counter */
+  // Limit & counter
   const [counter, setCounter] = useState<number>(9);
-  const [ skip, setSkip ] = useState<number>(9)
-  const [ currentPos, setCurrentPos ] = useState<number>(9)
-
-
+  const [skip, setSkip] = useState<number>(9);
+  const [currentPos, setCurrentPos] = useState<number>(9);
 
   useEffect(() => {
     // Définir l'état de chargement au début
@@ -63,194 +68,230 @@ const Home: NextPageWithLayout = ({res, allTracks, query}: any) => {
         setLoading(false);
         setError(true);
       }
-    }, 600); // Augmenter légèrement le délai pour une meilleure transition
+    }, 600);
     
     // Nettoyer le timer si le composant est démonté
     return () => clearTimeout(timer);
-  }, [res, router.query]); // Réduire les dépendances pour éviter les rendus inutiles
+  }, [res, router.query]);
   
-  const handleLoadMore = (e: any) => {
-      // e.preventDefault()
-      const newSkip = skip + 9;
-      setSkip(newSkip);
-      // router.push({
-      //   pathname: '/',
-      //   query: { ...router.query, skip: newSkip } },
-      //   undefined, {scroll: false})
-  }  
+  const handleLoadMore = () => {
+    const newSkip = skip + 9;
+    setSkip(newSkip);
+  };  
 
-  function getResultRangeBpm(value:any) {
-    handleBpm([value[0], value[1]])
+  function getResultRangeBpm(value: any) {
+    handleBpm([value[0], value[1]]);
   }
+
   const handleBpm = (val: any) => {
-    setSkip(9)
-    setLoading(true)
-    router.query.BpmMin = val[0]
-    router.query.BpmMax = val[1]
-    router.push( { 
-        pathname: '/', 
-        query: { ...router.query, BpmMin: val[0] } },
-        undefined, {scroll: false})    
-      router.push( { 
-        pathname: '/', 
-        query: { ...router.query, BpmMax: val[1] } },
-        undefined, {scroll: false})
-  }  
+    setSkip(9);
+    setLoading(true);
+    router.query.BpmMin = val[0];
+    router.query.BpmMax = val[1];
+    router.push(
+      { pathname: '/', query: { ...router.query, BpmMin: val[0] } },
+      undefined, 
+      { scroll: false }
+    );
+    router.push(
+      { pathname: '/', query: { ...router.query, BpmMax: val[1] } },
+      undefined, 
+      { scroll: false }
+    );
+  };  
 
+  const handleCategoryClick = (category: string) => {
+    setSkip(9);
+    setLoading(true);
+    setCounter(tracks.length);
+    router.push(
+      { pathname: '/', query: { ...router.query, category } },
+      undefined,
+      { scroll: false }
+    );
+  };
 
+  const handleRemoveFilter = (key: string) => {
+    setSkip(9);
+    setLoading(true);
+    const newQuery = { ...router.query };
+    delete newQuery[key];
+    router.replace({ pathname: router.pathname, query: newQuery }, undefined, { scroll: false });
+  };
 
   return (
-    <Layout page={"Sample Home | Stouflydoc"}>
-      <div className="min-h-screen place-items-center">
+    <Layout page="Sample Home | Stouflydoc">
+      <Container maxWidth="xl">
+        {/* INTRO */}
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom 
+          sx={{ 
+            borderBottom: `1px solid ${theme.palette.primary.main}`,
+            pb: 1,
+            mb: 4
+          }}
+        >
+          Plateforme de partage, de sauvegarde, d&apos;achat, de vente et de téléchargement de sample. Publier et partager vos créations musicales avec la communauté, ou simplement explorer et découvrer de nouveaux contenu.
+        </Typography>
 
-        <div className="container mx-auto filters__Section">
-          {/********/
-          /** INTRO */}
-          <h1 className='border-b border-b-1 border-orange-600'>{"Plateforme de partage, de sauvegarde, d'achat, de vente et de téléchargement de sample. Publier et partager vos créations musicales avec la communauté, ou simplement explorer et découvrer de nouveaux contenu."}</h1>
+        {/* ACCORDION FILTERS */}
+        <Paper 
+          elevation={2} 
+          sx={{ 
+            p: 2, 
+            mb: 4, 
+            mx: 'auto', 
+            maxWidth: 'md',
+            borderRadius: 2
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6">Filtres</Typography>
+            <IconButton onClick={() => setOpenAccordion(!openAccordion)}>
+              <ExpandMoreIcon sx={{ transform: openAccordion ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
+            </IconButton>
+          </Box>
 
-          {/********/
-          /** ACCORDION FILTERS */}
-          <div className={`relative accordion grid grid-flow-col w-2/3 mx-auto mt-10 p-2 dark:bg-zinc-900 bg-zinc-100 rounded-md shadow-md`}>
-            {/* <button className="cursor-pointer p-2 dark:bg-zinc-900 bg-zinc-100 rounded-md accordion_button" onClick={() => setOpenAccordion(!openAccordion)}>
-              {!openAccordion ?
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov mx-auto">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
-                : 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 accordion_hov mx-auto">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                </svg>
-              }
-            </button> */}
-
-            <div className={`${openAccordion ? "accordionOpened" : "accordionClosed"} `}>
-              {/********/
-              /** CATEGORY FILTERS */}
-              <div className="category_Item grid grid-cols-4 md:grid-cols-6">
-                {catList.map((cat: any, id: number) => (  
-                  <Link key={id} href={``} legacyBehavior>
-                    <a onClick={(e) => {
-                      e.preventDefault(),
-                      setSkip(9)
-                      setLoading(true)
-                      setCounter(tracks.length)
-                      router.query.category = cat, 
-                      router.push( {  pathname: '/',  query: { ...router.query, category: cat } },  undefined,  {scroll: false} )
-                    }}> 
-                      <button 
-                        onClick={() => {setCatActive(cat)}} 
-                        type="button"
-                        className={`${cat !== router.query.category ? '' : 'bg-orange-600'} w-full m-2 py-1 px-1 hover:bg-orange-600`}
-                      >{cat}</button>
-                    </a>
-                  </Link>
-                ))}
-              </div>
-            
-                {/********/
-                /** RANGE FILTERS */}
-                <BpmRangeFilter min={0} max={200} getResultRangeBpm={getResultRangeBpm}/>
-            </div>
-          </div>
-
-          {/********/
-          /** ACTIVE QUERY FILTERS */}
-          <div className='container w_full flex flex-wrap justify-center align-middle p-2'>
-            <ul className='flex flex-wrap justify-center align-middle'>
-              {Object.keys(router.query).map((item, i) => (
-                <li key={i} className='cursor-pointer text-md m-1 px-2 py-1 rounded-xl opacity-50 hover:opacity-80 border border-orange-600 text-center flex align-text-middle'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setSkip(9)
-                    setLoading(true)
-                    delete router.query[item]
-                    router.replace({ pathname: router.pathname, query: router.query }, undefined, {scroll: false})
-                  }}
-                > {item}: {router.query[item]}
-                    <svg className="w-7 h-7 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </li>
+          <Box sx={{ 
+            height: openAccordion ? 'auto' : 0, 
+            overflow: 'hidden',
+            transition: 'height 0.3s'
+          }}>
+            {/* CATEGORY FILTERS */}
+            <Typography variant="subtitle1" gutterBottom>Catégories</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+              {catList.map((cat: string, id: number) => (  
+                <Chip
+                  key={id}
+                  label={cat}
+                  color={cat === router.query.category ? 'primary' : 'default'}
+                  variant={cat === router.query.category ? 'filled' : 'outlined'}
+                  onClick={() => handleCategoryClick(cat)}
+                  sx={{ cursor: 'pointer' }}
+                />
               ))}
-            </ul>
-          </div>
-        </div>
+            </Box>
+          
+            {/* RANGE FILTERS */}
+            <Typography variant="subtitle1" gutterBottom>BPM</Typography>
+            <Box sx={{ px: 2, mb: 2 }}>
+              <BpmRangeFilter min={0} max={200} getResultRangeBpm={getResultRangeBpm}/>
+            </Box>
+          </Box>
+        </Paper>
 
-        {/********/}
-        {/** DISPLAY */}
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">
+        {/* ACTIVE QUERY FILTERS */}
+        {Object.keys(router.query).length > 0 && (
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="subtitle1" gutterBottom>Filtres actifs</Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              {Object.keys(router.query).map((item, i) => (
+                <Chip
+                  key={i}
+                  label={`${item}: ${router.query[item]}`}
+                  onDelete={() => handleRemoveFilter(item)}
+                  color="primary"
+                  variant="outlined"
+                  sx={{ mb: 1 }}
+                />
+              ))}
+            </Stack>
+          </Box>
+        )}
+
+        {/* DISPLAY */}
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Typography variant="h5">
               Samples disponibles
-              <span className="ml-2 px-3 py-1 text-sm bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 rounded-full">
-                {loading ? '...' : counter}
-              </span>
-            </h2>
+              <Chip
+                label={loading ? '...' : counter}
+                color="primary"
+                size="small"
+                sx={{ ml: 1 }}
+              />
+            </Typography>
             
-            {/* Boutons de tri (à implémenter plus tard) */}
-            <div className="hidden md:flex space-x-2">
-              <button className="px-3 py-1 text-sm bg-zinc-200 dark:bg-zinc-800 rounded-md hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors">
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+              <Button 
+                variant="outlined" 
+                size="small" 
+                startIcon={<AccessTimeIcon />}
+              >
                 Les plus récents
-              </button>
-              <button className="px-3 py-1 text-sm bg-zinc-200 dark:bg-zinc-800 rounded-md hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors">
+              </Button>
+              <Button 
+                variant="outlined" 
+                size="small" 
+                startIcon={<TrendingUpIcon />}
+              >
                 Les plus populaires
-              </button>
-            </div>
-          </div>
+              </Button>
+            </Box>
+          </Box>
           
           {/* Conteneur principal avec hauteur minimale fixe */}
-          <div className="min-h-[70vh]">
+          <Box sx={{ minHeight: '70vh' }}>
             {loading ? (
               /* État de chargement */
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
-                {[...Array(skip < counter ? skip : 9)].map((n: any, id: number) => (
-                  <Skeleton key={`skeleton-${id}`} style={{animationDelay: `${id/10}s`}} />
+              <Grid container spacing={3}>
+                {[...Array(skip < counter ? skip : 9)].map((_, id) => (
+                  <Grid item xs={12} sm={6} md={4} key={`skeleton-${id}`}>
+                    <Skeleton style={{ animationDelay: `${id/10}s` }} />
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
             ) : error ? (
               /* Message d'erreur */
-              <div className="flex flex-col items-center justify-center py-12 animate-fadeIn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-zinc-400 mb-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                </svg>
-                <h4 className="text-xl font-bold text-zinc-700 dark:text-zinc-300">Aucun résultat trouvé</h4>
-                <p className="text-zinc-500 mt-2">Essayez de modifier vos critères de recherche</p>
-              </div>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                py: 6
+              }}>
+                <SearchIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  Aucun résultat trouvé
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Essayez de modifier vos critères de recherche
+                </Typography>
+              </Box>
             ) : (
               /* Tracks réelles */
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
+              <Grid container spacing={3}>
                 {tracks.slice(0, skip).map((track: any, id: number) => (
-                  <AudioPlayer key={`track-${id}`} track={track} />
+                  <Grid item xs={12} sm={6} md={4} key={`track-${id}`}>
+                    <AudioPlayer track={track} />
+                  </Grid>
                 ))}
-              </div>
+              </Grid>
             )}
-          </div>
+          </Box>
           
-          {skip < counter && (
-            <div className="flex justify-center mt-10">
-              <button 
-                onClick={(e) => handleLoadMore(e)} 
-                type="button" 
-                className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-md shadow-md hover:shadow-lg transition-all duration-300 flex items-center"
+          {skip < counter && !loading && !error && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={handleLoadMore}
+                endIcon={<ExpandMoreIcon />}
+                size="large"
               >
-                <span>Charger plus</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 ml-2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
-                </svg>
-              </button>
-            </div>
+                Charger plus
+              </Button>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Container>
     </Layout>
-  )
-}
+  );
+};
 
-export default Home
-
-
-
-
+export default Home;
 
 export async function getServerSideProps({ query }: any) {
   const res = await getTracks(query);
@@ -264,4 +305,4 @@ export async function getServerSideProps({ query }: any) {
       query 
     } 
   };
-}
+} 

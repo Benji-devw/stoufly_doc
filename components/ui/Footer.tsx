@@ -1,17 +1,44 @@
-// import Image from "next/image"
+import { Box, Container, Typography, Link as MuiLink } from '@mui/material';
 
 const Footer = () => {
-  
   return (
-    <footer className="flex flex-row justify-center p-2 mt-6">
-      {new Date().getFullYear()} - <span className="mr-2 ml-2">Product by Jamin_dev_art </span> - <span className="mr-2 ml-2">Stouflydoc version test</span>
-        {/* <a href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank" rel="noopener noreferrer" >
-          Powered by{' JaminCode'}
-          <span className={""}> <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} /> </span>
-        </a> */}
-    </footer>
-  )
-}
+    <Box 
+      component="footer" 
+      sx={{ 
+        py: 3, 
+        mt: 'auto',
+        backgroundColor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography 
+          variant="body2" 
+          color="text.secondary" 
+          align="center"
+        >
+          {`${new Date().getFullYear()} - `}
+          <MuiLink 
+            color="inherit" 
+            href="https://github.com/jamin-dev-art" 
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ mx: 1 }}
+          >
+            Product by Jamin_dev_art
+          </MuiLink>
+          {` - `}
+          <Typography 
+            component="span" 
+            variant="body2" 
+            color="text.secondary"
+            sx={{ mx: 1 }}
+          >
+            Stouflydoc version test
+          </Typography>
+        </Typography>
+      </Container>
+    </Box>
+  );
+};
 
-export default Footer
+export default Footer;

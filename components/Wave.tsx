@@ -1,6 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link';
 import type WaveSurfer from 'wavesurfer.js';
+import { 
+  Box, 
+  IconButton, 
+  Typography, 
+  Grid, 
+  Tooltip, 
+  useTheme,
+  styled
+} from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import DownloadIcon from '@mui/icons-material/Download';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SpeedIcon from '@mui/icons-material/Speed';
 
 
 interface IWaveProps {
@@ -8,9 +22,18 @@ interface IWaveProps {
   bpm: number;
 }
 
+// Composant stylisé pour le conteneur de la forme d'onde
+const WaveContainer = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[200],
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(1),
+  height: '100px',
+  width: '100%',
+}));
 
 const Wave = ({url, bpm}: IWaveProps) => {
    
+  const theme = useTheme();
   const waveform = useRef<WaveSurfer | null>(null);
   const waveformRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] =   useState(false);
@@ -47,12 +70,11 @@ const Wave = ({url, bpm}: IWaveProps) => {
         const WaveSurfer = (await import("wavesurfer.js")).default;
         waveform.current = WaveSurfer.create({
           container: waveformRef.current,
-          waveColor: '#ea580c',
-          progressColor: '#9a3412',
-          // cursorColor: 'black',
+          waveColor: theme.palette.primary.light,
+          progressColor: theme.palette.primary.main,
           cursorWidth: 2,
           barWidth: 3,
-          height: 122,
+          height: 80,
           hideScrollbar: true,
           barGap: 2,
           barRadius: 2,
@@ -62,13 +84,11 @@ const Wave = ({url, bpm}: IWaveProps) => {
   
         waveform.current.load(url);
         waveform.current.on("ready", () => {
-          // setDuration(calculateDuration(waveform.current.getDuration()));
           setDuration(waveform.current?.getDuration().toFixed(1) || '0:00');
           waveform.current?.setVolume(1);
           setIsReady(true);
         });
         waveform.current.on("audioprocess", () => {
-          // setCurrentTime(calculateCurrentTime(waveform.current.getCurrentTime()));
           setCurrentTime(waveform.current?.getCurrentTime().toFixed(1) || '0:00');
         });
         waveform.current.on("play", () => setIsPlaying(true));
@@ -101,7 +121,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
         waveform.current = null;
       }
     };
-  }, [url]);
+  }, [url, theme.palette.primary]);
 
   /********/
   /** WAVE PLAY AND PAUSE */
@@ -115,69 +135,76 @@ const Wave = ({url, bpm}: IWaveProps) => {
     }
   };
 
-
-
-
+  // Gestion du téléchargement
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `track-${new Date().getTime()}.mp3`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <>
+    <Box sx={{ width: '100%' }}>
       {/********/
       /** WAVE DISPLAY */}
-      <div className="wave__wrapper  bg-zinc-900 rounded-md">
-        <div ref={waveformRef} id="waveform" className="wave"></div>
-      </div>
+      <WaveContainer>
+        <Box ref={waveformRef} id="waveform" sx={{ width: '100%', height: '100%' }} />
+      </WaveContainer>
       
       {/********/
       /** WAVE PLAY AND PAUSE */}
-      <div className="card__controls p-2">
-        {!isPlaying ? (
-          <div onClick={togglePlayback} className={!isReady ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 hover:stroke-orange-600">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
-              </svg>
-          </div>
-        ) : (
-          <div onClick={togglePlayback}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8  cursor-pointer hover:stroke-orange-600">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
-              </svg>
-          </div>
-        )}
-      </div>
-
-      {/********/
-      /** WAVE PROPS */}
-      <div className={`flex text-left p-2`}> 
-          <span className='basis-2/3'>... {bpm ? `${bpm} bpm` : ''} </span>
-            
-          <div className='basis-2/3 relative'> 
-            <svg className="card__time w-6 h-6 stroke-orange-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>{currentTime} / {duration}</span>
-          </div>
-
-          <a 
-            className='basis-1/3 card__download cursor-pointer' 
-            href={url} 
-            download={`track-${new Date().getTime()}.mp3`}
-            onClick={(e) => {
-              e.preventDefault();
-              // Créer un élément a temporaire pour forcer le téléchargement
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = `track-${new Date().getTime()}.mp3`;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            }}
-          >
-            <svg className="w-6 h-6 mx-auto hover:stroke-orange-600 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-          </a>
-      </div>
-    </>
+      <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+        <IconButton 
+          onClick={togglePlayback} 
+          disabled={!isReady}
+          color="primary"
+          size="medium"
+          sx={{ 
+            mr: 1,
+            opacity: !isReady ? 0.5 : 1,
+          }}
+        >
+          {!isPlaying ? <PlayArrowIcon /> : <PauseIcon />}
+        </IconButton>
+        
+        <Grid container alignItems="center" spacing={1}>
+          {/********/
+          /** WAVE PROPS */}
+          <Grid item xs={4}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <SpeedIcon color="action" fontSize="small" sx={{ mr: 0.5 }} />
+              <Typography variant="body2" color="text.secondary">
+                {bpm ? `${bpm} bpm` : ''}
+              </Typography>
+            </Box>
+          </Grid>
+          
+          <Grid item xs={4}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <AccessTimeIcon color="action" fontSize="small" sx={{ mr: 0.5 }} />
+              <Typography variant="body2" color="text.secondary">
+                {currentTime} / {duration}
+              </Typography>
+            </Box>
+          </Grid>
+          
+          <Grid item xs={4} sx={{ textAlign: 'right' }}>
+            <Tooltip title="Télécharger">
+              <IconButton 
+                onClick={handleDownload} 
+                color="primary"
+                size="small"
+              >
+                <DownloadIcon />
+              </IconButton>
+            </Tooltip>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   )
 }
 export default Wave

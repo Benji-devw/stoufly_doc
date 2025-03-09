@@ -1,4 +1,15 @@
 import React from 'react';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Skeleton as MuiSkeleton,
+  Box,
+  Divider,
+  Grid,
+  useTheme
+} from '@mui/material';
 
 interface SkeletonProps {
   style?: React.CSSProperties;
@@ -11,76 +22,113 @@ const barHeights = [
 ];
 
 const Skeleton = ({ style }: SkeletonProps) => {
+  const theme = useTheme();
+  
   return (
-    <div 
-      style={style} 
-      className="skeleton flex flex-col border dark:border-zinc-800 border-zinc-200 dark:bg-zinc-900/70 bg-zinc-100/70 rounded-lg shadow-md overflow-hidden h-[352px] w-full"
+    <Card 
+      sx={{ 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        ...style
+      }}
     >
-      {/* En-tête de la carte - hauteur fixe pour correspondre à AudioPlayer */}
-      <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 h-[88px]">
-        <div className="flex justify-between items-center mb-2">
-          <div className="h-6 w-3/4 rounded-md dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <div className="h-4 w-6 rounded-md dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-              <div className="h-5 w-5 rounded-full dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-            </div>
-            <div className="h-7 w-7 rounded-full dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-          </div>
-        </div>
-        
-        <div className="flex items-center mt-2">
-          <div className="h-4 w-16 rounded-md dark:bg-zinc-800 bg-zinc-300 mr-2 animate-pulse"></div>
-          <div className="h-5 w-20 rounded-full dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-        </div>
-      </div>
+      <CardHeader
+        title={<MuiSkeleton variant="text" width="70%" height={32} />}
+        action={
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <MuiSkeleton variant="text" width={30} />
+              <MuiSkeleton variant="circular" width={24} height={24} sx={{ ml: 0.5 }} />
+            </Box>
+            <MuiSkeleton variant="circular" width={24} height={24} />
+          </Box>
+        }
+        subheader={
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+            <MuiSkeleton variant="text" width={60} sx={{ mr: 1 }} />
+            <MuiSkeleton variant="rectangular" width={80} height={24} sx={{ borderRadius: 10 }} />
+          </Box>
+        }
+      />
 
-      {/* Visualisation de l'onde sonore - hauteur fixe pour correspondre à Wave */}
-      <div className="p-3 h-[164px]">
-        {/* Wrapper de l'onde */}
-        <div className="h-24 w-full rounded-md dark:bg-zinc-800 bg-zinc-300 flex items-center px-2">
-          <div className="flex items-end justify-between w-full h-16">
+      <CardContent sx={{ p: 2, flexGrow: 1 }}>
+        {/* Visualisation de l'onde sonore */}
+        <Box sx={{ 
+          bgcolor: theme.palette.mode === 'dark' ? 'grey.800' : 'grey.200',
+          borderRadius: 1,
+          p: 1,
+          height: 100,
+          display: 'flex',
+          alignItems: 'center'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'flex-end', 
+            justifyContent: 'space-between',
+            width: '100%',
+            height: 64
+          }}>
             {barHeights.map((height, index) => (
-              <div 
-                key={index} 
-                className="w-1.5 dark:bg-zinc-700 bg-zinc-400 rounded-sm mx-0.5 animate-pulse"
-                style={{ 
+              <Box
+                key={index}
+                sx={{
+                  width: 4,
                   height: `${height}%`,
-                  animationDelay: `${index * 0.05}s`
+                  mx: 0.25,
+                  borderRadius: 0.5,
+                  bgcolor: theme.palette.mode === 'dark' ? 'grey.700' : 'grey.400',
+                  animation: 'pulse 1.5s ease-in-out infinite',
+                  animationDelay: `${index * 0.05}s`,
+                  '@keyframes pulse': {
+                    '0%, 100%': { opacity: 1 },
+                    '50%': { opacity: 0.5 },
+                  },
                 }}
-              ></div>
+              />
             ))}
-          </div>
-        </div>
-        
-        {/* Contrôles de l'onde */}
-        <div className="flex items-center mt-2 h-8">
-          <div className="h-8 w-8 rounded-md dark:bg-zinc-800 bg-zinc-300 mr-4 animate-pulse"></div>
-          <div className="flex justify-between w-full">
-            <div className="h-5 w-20 rounded-md dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-            <div className="h-5 w-20 rounded-md dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
 
-      {/* Pied de la carte avec tags - hauteur fixe */}
-      <div className="mt-auto p-3 border-t border-zinc-200 dark:border-zinc-800 h-[100px]">
-        <div className="flex flex-wrap gap-1.5 mb-2">
+        {/* Contrôles */}
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+          <MuiSkeleton variant="circular" width={32} height={32} sx={{ mr: 2 }} />
+          <Grid container justifyContent="space-between">
+            <Grid item>
+              <MuiSkeleton variant="text" width={80} />
+            </Grid>
+            <Grid item>
+              <MuiSkeleton variant="text" width={80} />
+            </Grid>
+          </Grid>
+        </Box>
+      </CardContent>
+
+      <Divider />
+
+      <CardActions sx={{ flexDirection: 'column', alignItems: 'stretch', p: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
           {[1, 2, 3].map((_, index) => (
-            <div 
+            <MuiSkeleton 
               key={index} 
-              className="h-5 w-16 rounded-full dark:bg-zinc-800 bg-zinc-300 animate-pulse"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            ></div>
+              variant="rectangular" 
+              width={60} 
+              height={24} 
+              sx={{ 
+                borderRadius: 10,
+                animation: 'pulse 1.5s ease-in-out infinite',
+                animationDelay: `${index * 0.1}s`,
+              }} 
+            />
           ))}
-        </div>
+        </Box>
         
-        <div className="flex justify-between items-center mt-4">
-          <div className="h-3 w-24 rounded-md dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-          <div className="h-3 w-24 rounded-md dark:bg-zinc-800 bg-zinc-300 animate-pulse"></div>
-        </div>
-      </div>
-    </div>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+          <MuiSkeleton variant="text" width={100} />
+          <MuiSkeleton variant="text" width={100} />
+        </Box>
+      </CardActions>
+    </Card>
   );
 };
 
