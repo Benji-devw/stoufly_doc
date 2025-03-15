@@ -46,7 +46,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
 
   /********/
   /** WAVE CREATE */
-  const createWave = useCallback(async () => {
+  const createWave = async () => {
     if (waveformRef.current && !waveform.current) {
       try {
         // Vérifie si l'URL est valide
@@ -77,14 +77,7 @@ const Wave = ({url, bpm}: IWaveProps) => {
           setLoadError(true);
         });
         
-        // Charge l'URL avec un try/catch
-        try {
-          waveform.current.load(url);
-        } catch (error) {
-          console.error("Erreur lors du chargement de l'URL:", error);
-          setIsReady(false);
-        }
-        
+        waveform.current.load(url);
         waveform.current.on("ready", () => {
           setDuration(waveform.current?.getDuration().toFixed(1) || '0:00');
           waveform.current?.setVolume(1);
@@ -99,13 +92,11 @@ const Wave = ({url, bpm}: IWaveProps) => {
         console.error("Erreur lors de la création de WaveSurfer:", error);
       }
     }
-  }, [url, theme.palette.primary.light, theme.palette.primary.main]);
+  };
 
   useEffect(() => {
     // Réinitialiser l'état si l'URL change
     setIsReady(false);
-    setLoadError(false);
-    setRetryCount(0);
     
     // Détruire l'instance précédente si elle existe
     if (waveform.current) {
@@ -113,16 +104,19 @@ const Wave = ({url, bpm}: IWaveProps) => {
       waveform.current = null;
     }
     
-    // Créer une nouvelle instance
-    createWave();
+    // Créer une nouvelle instance après un court délai pour s'assurer que le DOM est prêt
+    const timer = setTimeout(() => {
+      createWave();
+    }, 100);
     
     return () => {
+      clearTimeout(timer);
       if (waveform.current) {
         waveform.current.destroy();
         waveform.current = null;
       }
     };
-  }, [createWave]);
+  }, [url, theme.palette.primary]);
 
   // Fonction pour réessayer
   const handleRetry = () => {
